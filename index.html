@@ -14,7 +14,7 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            overflow: hidden; /* 防止背景动画溢出 */
+            overflow: hidden;
             position: relative;
         }
 
@@ -109,6 +109,25 @@
                 transform: translateY(0);
             }
         }
+
+        /* 新增长方形按钮样式 */
+        .planet-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #add8e6; /* 淡蓝色 */
+            color: #ffffff; /* 改为纯白色 */
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .planet-button:hover {
+            background-color: #87ceeb; /* 悬停时稍深的淡蓝 */
+        }
     </style>
 </head>
 <body>
@@ -130,6 +149,8 @@
         <div class="contact">
             3860957951@qq.com<br>
         </div>
+        <!-- 新增跳转按钮 -->
+        <a href="http://www.srpn.top" class="planet-button" target="_blank">什么是星球阁？</a>
     </div>
 </body>
 </html>
