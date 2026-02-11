@@ -14,7 +14,37 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: hidden; /* 防止背景动画溢出 */
+            position: relative;
         }
+
+        /* 背景流动渐变动画 */
+        body::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                rgba(74, 144, 226, 0.05),
+                rgba(255, 193, 7, 0.05),
+                rgba(74, 144, 226, 0.05)
+            );
+            animation: gradientFlow 10s linear infinite;
+            z-index: -1;
+        }
+
+        @keyframes gradientFlow {
+            0% {
+                transform: translateX(-25%);
+            }
+            100% {
+                transform: translateX(25%);
+            }
+        }
+
         .profile-card {
             background-color: #ffffff;
             border-radius: 12px;
@@ -23,8 +53,11 @@
             width: 90%;
             text-align: center;
             padding: 30px 20px;
-            overflow: hidden; /* 防止动画超出卡片 */
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
         }
+
         .avatar {
             width: 120px;
             height: 120px;
@@ -32,29 +65,44 @@
             object-fit: cover;
             margin-bottom: 20px;
             border: 3px solid #4a90e2;
+            animation: avatarRotate 5s ease-in-out infinite;
         }
+
+        @keyframes avatarRotate {
+            0% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(10deg) scale(1.1);
+            }
+            100% {
+                transform: rotate(0deg) scale(1);
+            }
+        }
+
         h1 {
             margin: 0;
             color: #333333;
             font-size: 28px;
         }
+
         p {
             color: #666666;
             line-height: 1.6;
             margin-top: 15px;
             font-size: 16px;
-            opacity: 0; /* 初始透明 */
-            transform: translateY(50px); /* 初始位置在下方 */
+            opacity: 0;
+            transform: translateY(50px);
             animation: slideUpFadeIn 1s ease-out forwards;
-            animation-delay: 0.3s; /* 延迟一点出现 */
+            animation-delay: 0.5s;
         }
+
         .contact {
             margin-top: 25px;
             font-size: 14px;
             color: #999999;
         }
 
-        /* 动画定义 */
         @keyframes slideUpFadeIn {
             to {
                 opacity: 1;
