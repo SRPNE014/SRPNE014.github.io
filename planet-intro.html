@@ -32,7 +32,6 @@
         }
 
         .box {
-            flex: 1 1 300px;
             height: 300px;
             background-color: #add8e6;
             border-radius: 20px;
@@ -51,15 +50,50 @@
         .box:hover {
             transform: scale(1.05);
         }
+
+        /* 第一个方块保持原宽 */
+        .box-large {
+            flex: 1 1 300px;
+        }
+
+        /* 第二个方块缩小宽度 */
+        .box-small {
+            flex: 0 1 300px;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 了解更多按钮样式 */
+        .learn-more-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #000000;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .learn-more-btn:hover {
+            background-color: #e0f7ff;
+            color: #005f86;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="box">拿数据说话
-        总成员数200+
-        总粉丝数300w+
+        <div class="box box-large">拿数据说话
+        总成员数：200+
+        总粉丝数：300w+
         增长最高：Maugfy</div>
-        <div class="box">连接你我 · 共创未来</div>
+        <div class="box box-small">
+            <div>连接你我 · 共创未来</div>
+            <a href="http://www.srpn.top" class="learn-more-btn" target="_blank">了解更多</a>
+        </div>
     </div>
 </body>
 </html>
+
