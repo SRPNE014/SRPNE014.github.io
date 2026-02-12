@@ -18,7 +18,6 @@
             position: relative;
         }
 
-        /* 背景流动渐变动画 */
         body::before {
             content: "";
             position: absolute;
@@ -110,23 +109,8 @@
             }
         }
 
-        /* 新增长方形按钮样式 */
-        .planet-button {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 24px;
-            background-color: #add8e6;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 6px;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
-
-        .planet-button:hover {
-            background-color: #87ceeb;
+        .strike-through {
+            text-decoration: line-through;
         }
     </style>
 </head>
@@ -144,13 +128,12 @@
             恋人：@Nsakrty地月系·SRPN @依托青菜(？<br>
             兄弟：@水益一枚ww@依托蓝天系Ranke——SRPN<br>
             永远的神：@Earth-2『星璃Starlie』<br>
-            更新时间：2026/02/10/13:03
+            <span class="strike-through">更新时间：2026/02/10/13:03</span>
         </p>
         <div class="contact">
             3860957951@qq.com<br>
         </div>
-        <!-- 修改跳转链接 -->
-        <a href="planet-intro.html" class="planet-button" target="_blank">什么是星球阁？</a>
     </div>
 </body>
 </html>
+
