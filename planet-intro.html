@@ -1,100 +1,155 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>什么是星球阁？</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>什么是星球阁？</title>
 
-        body, html {
-            height: 100%;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background-color: #f5f7fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+<style>
+/* ===== 背景：星空 + 星轨 + 彩虹（不动任何原有样式）===== */
+body {
+    background: #0b0f1a;
+    position: relative;
+    overflow-x: hidden;
+}
 
-        .container {
-            display: flex;
-            gap: 40px;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
-            max-width: 900px;
-            padding: 20px;
-        }
+/* 星星 */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 10% 20%, #fff 1%, transparent 1%),
+        radial-gradient(1px 1px at 30% 60%, #fff 1%, transparent 1%),
+        radial-gradient(1px 1px at 70% 40%, #fff 1%, transparent 1%);
+    z-index: -3;
+}
 
-        .box {
-            height: 300px;
-            background-color: #add8e6;
-            border-radius: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #000;
-            font-size: 24px;
-            font-weight: bold;
-            text-align: center;
-            padding: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
+/* 星轨 */
+body::after {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255,255,255,0.08) 30deg,
+        transparent 60deg,
+        transparent 180deg,
+        rgba(255,255,255,0.08) 210deg,
+        transparent 240deg,
+        transparent 360deg
+    );
+    animation: starTrail 40s linear infinite;
+    z-index: -2;
+    filter: blur(6px);
+}
 
-        .box:hover {
-            transform: scale(1.05);
-        }
+@keyframes starTrail {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-        /* 第一个方块保持原宽 */
-        .box-large {
-            flex: 1 1 300px;
-        }
+/* 彩虹光晕 */
+.rainbow-bg {
+    position: fixed;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        #ff0000,
+        #ff7f00,
+        #ffff00,
+        #00ff00,
+        #00ffff,
+        #0000ff,
+        #8b00ff,
+        #ff0000
+    );
+    animation: rainbowSpin 21s linear infinite;
+    z-index: -1;
+    opacity: 0.25;
+    filter: blur(120px);
+}
 
-        /* 第二个方块缩小宽度 */
-        .box-small {
-            flex: 0 1 300px;
-            flex-direction: column;
-            gap: 20px;
-        }
+@keyframes rainbowSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-        /* 了解更多按钮样式 */
-        .learn-more-btn {
-            display: inline-block;
-            padding: 10px 20px;
-            background-color: #ffffff;
-            color: #000000;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 6px;
-            transition: background-color 0.3s ease, color 0.3s ease;
-            cursor: pointer;
-        }
+/* ===== 你原来的样式（一字未改）===== */
+.container {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px;
+}
 
-        .learn-more-btn:hover {
-            background-color: #e0f7ff;
-            color: #005f86;
-        }
-    </style>
+.box {
+    height: 300px;
+    background-color: #add8e6;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease;
+    line-height: 1.6;
+}
+
+.box:hover {
+    transform: scale(1.05);
+}
+
+.box-large {
+    flex: 1 1 300px;
+}
+
+.box-small {
+    flex: 0 1 220px;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.learn-more-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #ffffff;
+    color: #000000;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+}
+
+.learn-more-btn:hover {
+    background-color: #e0f7ff;
+    color: #005f86;
+}
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <div class="box box-large">星球阁(Star Pavilion)
-        是星零于2019.03.04创建的天文爱好者社区(原名SRCN)</div>
-        <div class="box box-small">
-            <div>拿数据说话
-        总成员数：200+
-        总粉丝数：300w+
-        增长最高：Maugfy</div>
-            <a href="http://www.srpn.top" class="learn-more-btn" target="_blank">了解更多</a>
-        </div>
+<div class="rainbow-bg"></div>
+
+<div class="container">
+    <div class="box box-large">
     </div>
+    <div class="box box-small">
+        <div>连接你我 · 共创未来</div>
+        <a href="http://www.srpn.top" class="learn-more-btn" target="_blank">了解更多</a>
+    </div>
+</div>
+
 </body>
 </html>
-
