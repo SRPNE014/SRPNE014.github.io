@@ -264,7 +264,7 @@ body {
     100% { transform: scale(1); }
 }
 
-/* ===== 自定义右键确认弹窗 ===== */
+/* ===== 确认弹窗 ===== */
 .confirm-modal {
     position: fixed;
     inset: 0;
@@ -437,20 +437,19 @@ function hideConfirm() {
 }
 
 cancelBtn.onclick = hideConfirm;
-
 confirmBtn.onclick = () => {
     if (pendingAction) pendingAction();
     hideConfirm();
 };
 
-/* ===== 录音 ===== */
+/* ===== 录音限制 ===== */
+const MIN_DURATION = 0.5;
+const MAX_DURATION = 30;
+
 let mediaRecorder;
 let audioChunks = [];
 let recordStartTime = 0;
 let maxDurationTimer = null;
-
-const MIN_DURATION = 0.5;
-const MAX_DURATION = 30;
 
 /* ===== 系统提示 ===== */
 function showSystemToast(msg) {
@@ -499,7 +498,6 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
         content.addEventListener("mouseup", () => clearTimeout(timer));
         content.addEventListener("mouseleave", () => clearTimeout(timer));
 
-        // ✅ 语音右键撤回
         if (isSelf) {
             msg.addEventListener("contextmenu", e => {
                 e.preventDefault();
@@ -514,7 +512,6 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
         content = document.createTextNode(text);
         msg.dataset.text = text;
 
-        // ✅ 文本右键撤回
         if (isSelf) {
             msg.addEventListener("contextmenu", e => {
                 e.preventDefault();
@@ -536,7 +533,7 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* ===== 机器人问候 ===== */
+/* ===== 机器人问候（只说一次）===== */
 window.onload = () => {
     showSystemToast("✅ 聊天室已连接");
 
@@ -546,20 +543,7 @@ window.onload = () => {
             renderMessage(t, false, bot);
         }, 800 * (i + 1));
     });
-
-    startBotRandomReply();
 };
-
-/* ===== 机器人插嘴 ===== */
-let botTimer = setInterval(() => {
-    const bot = bots[Math.floor(Math.random() * bots.length)];
-    const text = bot.texts[Math.floor(Math.random() * bot.texts.length)];
-    setTimeout(() => {
-        renderMessage(text, false, bot);
-    }, Math.random() * 2000);
-}, 30000);
-
-function startBotRandomReply() {}
 
 /* ===== 发送文本 ===== */
 function sendText() {
@@ -567,12 +551,6 @@ function sendText() {
     if (!text) return;
     renderMessage(text, true, currentUser);
     textInput.value = "";
-
-    setTimeout(() => {
-        const bot = bots[Math.floor(Math.random() * bots.length)];
-        const t = bot.texts[Math.floor(Math.random() * bot.texts.length)];
-        renderMessage(t, false, bot);
-    }, 1000 + Math.random() * 2000);
 }
 
 sendBtn.onclick = sendText;
