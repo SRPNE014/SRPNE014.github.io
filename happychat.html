@@ -13,11 +13,12 @@ body {
     margin: 0;
     padding: 0;
     height: 100vh;
+    width: 100vw;
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    overflow: hidden;
 }
 
 body::before {
@@ -36,232 +37,56 @@ body::after {
     inset: -50%;
     background: conic-gradient(
         from 0deg,
-        transparent 0deg,
-        rgba(255,255,255,0.08) 30deg,
-        transparent 60deg,
-        transparent 180deg,
-        rgba(255,255,255,0.08) 210deg,
-        transparent 240deg,
-        transparent 360deg
+        #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd, #ff6b6b
     );
-    animation: starTrail 40s linear infinite;
-    z-index: -2;
-    filter: blur(6px);
+    animation: rotate 20s linear infinite;
+    z-index: -4;
 }
 
-@keyframes starTrail {
-    0% { transform: rotate(0deg); }
+@keyframes rotate {
     100% { transform: rotate(360deg); }
 }
 
-.rainbow-bg {
-    position: fixed;
-    inset: -50%;
-    background: conic-gradient(
-        from 0deg,
-        #ff0000,
-        #ff7f00,
-        #ffff00,
-        #00ff00,
-        #00ffff,
-        #0000ff,
-        #8b00ff,
-        #ff0000
-    );
-    animation: rainbowSpin 21s linear infinite;
-    z-index: -1;
-    opacity: 0.25;
-    filter: blur(120px);
-}
-
-@keyframes rainbowSpin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* ===== 聊天室 UI ===== */
-.chat-box {
-    width: 90%;
-    max-width: 420px;
-    height: 75vh;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: blur(6px);
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+/* ===== 聊天容器 ===== */
+.chat-container {
+    width: 95vw;
+    max-width: 900px;
+    height: 90vh;
+    max-height: 700px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    z-index: 1;
+    position: relative;
 }
 
-.chat-header {
-    padding: 15px;
-    font-weight: bold;
-    font-size: 18px;
-    background: rgba(173,216,230,0.6);
-    color: #333;
+/* ===== 标题栏 ===== */
+.header {
+    padding: 16px 20px;
     text-align: center;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.2);
 }
 
-.chat-messages {
+/* ===== 消息区域 ===== */
+.chat-box {
     flex: 1;
-    padding: 15px;
     overflow-y: auto;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
+    position: relative;
 }
 
-/* ===== 消息进场动画 ===== */
-.msg-wrapper {
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    max-width: 85%;
-    opacity: 0;
-    transform: scale(0.95);
-    animation: msgIn 0.3s ease forwards;
-}
-
-.msg-wrapper.me {
-    align-self: flex-end;
-    flex-direction: row-reverse;
-}
-
-@keyframes msgIn {
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-.avatar-mini {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    background: #add8e6;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 14px;
-    color: #fff;
-    flex-shrink: 0;
-}
-
-.nickname {
-    font-size: 12px;
-    color: #888;
-    margin-bottom: 4px;
-}
-
-.msg {
-    padding: 8px 12px;
-    background: #eef4ff;
-    border-radius: 8px;
-    font-size: 15px;
-    color: #333;
-    word-break: break-word;
-}
-
-.msg.me {
-    background: #d2f8d2;
-}
-
-/* ===== 语音波形 ===== */
-.voice-msg {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 12px;
-    background: #d2f8d2;
-    border-radius: 20px;
-    max-width: 70%;
-    align-self: flex-end;
-    cursor: pointer;
-}
-
-.voice-wave {
-    display: flex;
-    align-items: flex-end;
-    gap: 2px;
-    height: 14px;
-}
-
-.wave-bar {
-    width: 4px;
-    background: #333;
-    border-radius: 2px;
-    animation: wave 1.2s infinite ease-in-out;
-}
-
-.wave-bar:nth-child(2) { animation-delay: .2s; height: 10px; }
-.wave-bar:nth-child(3) { animation-delay: .4s; height: 14px; }
-.wave-bar:nth-child(4) { animation-delay: .6s; height: 10px; }
-
-@keyframes wave {
-    0%, 100% { transform: scaleY(0.6); }
-    50% { transform: scaleY(1); }
-}
-
-.voice-duration {
-    font-size: 12px;
-    color: #555;
-}
-
-/* ===== 输入区 ===== */
-.chat-input {
-    display: flex;
-    border-top: 1px solid #ddd;
-}
-
-.chat-input input {
-    flex: 1;
-    border: none;
-    padding: 12px;
-    font-size: 14px;
-    outline: none;
-}
-
-.chat-input button {
-    border: none;
-    background: #add8e6;
-    padding: 0 16px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #333;
-}
-
-.mic-btn {
-    border: none;
-    background: #ff6b6b;
-    color: #fff;
-    font-size: 20px;
-    padding: 0 12px;
-    cursor: pointer;
-}
-
-.mic-btn.recording {
-    background: #ff3b3b;
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-.back-btn {
-    margin-top: 15px;
-    display: inline-block;
-    padding: 10px 20px;
-    background: #add8e6;
-    color: #fff;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 6px;
-}
-    /* ===== 系统提示 ===== */
+/* ===== 系统提示 ===== */
 .system-toast {
     position: absolute;
     top: 70px;
@@ -296,32 +121,224 @@ body::after {
         transform: translateX(-50%) translateY(-10px);
     }
 }
-</style>
-</head>
 
+/* ===== 消息项 ===== */
+.message {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 18px;
+    font-size: 15px;
+    line-height: 1.5;
+    word-wrap: break-word;
+    animation: fadeIn 0.3s ease;
+    position: relative;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.message.self {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 4px;
+}
+
+.message.other {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    align-self: flex-start;
+    border-bottom-left-radius: 4px;
+}
+
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+    margin-right: 8px;
+    vertical-align: middle;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.nickname {
+    font-weight: bold;
+    margin-bottom: 4px;
+    display: block;
+    font-size: 13px;
+    opacity: 0.9;
+}
+
+/* ===== 输入栏 ===== */
+.input-bar {
+    padding: 16px 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+#textInput {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 24px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-size: 15px;
+    outline: none;
+    transition: background 0.2s;
+}
+
+#textInput:focus {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+#sendBtn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 24px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+}
+
+#sendBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+#sendBtn:active {
+    transform: translateY(0);
+}
+
+/* ===== 录音按钮 ===== */
+.record-btn {
+    padding: 12px 16px;
+    border: none;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
+    color: white;
+    cursor: pointer;
+    font-size: 18px;
+    transition: transform 0.1s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.record-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.record-btn.recording {
+    animation: pulse 1s infinite;
+    background: linear-gradient(135deg, #ff4757, #ff6b6b);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* ===== 移动端适配 ===== */
+@media (max-width: 768px) {
+    .chat-container {
+        width: 98vw;
+        height: 95vh;
+        max-height: none;
+        border-radius: 12px;
+    }
+
+    .header {
+        padding: 12px 16px;
+        font-size: 16px;
+    }
+
+    .chat-box {
+        padding: 16px;
+        gap: 10px;
+    }
+
+    .message {
+        max-width: 85%;
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+    .input-bar {
+        padding: 12px 16px;
+        gap: 8px;
+    }
+
+    #textInput {
+        padding: 10px 14px;
+        font-size: 14px;
+    }
+
+    #sendBtn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+
+    .record-btn {
+        padding: 10px 14px;
+        font-size: 16px;
+    }
+}
+
+/* ===== 滚动条美化 ===== */
+.chat-box::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-box::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.chat-box::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+.chat-box::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+</style>
+
+</head>
 <body>
 
-<div class="rainbow-bg"></div>
+<div class="chat-container">
+    <div class="header">🌟 我的专属聊天室</div>
 
-<div class="chat-box">
-    <div class="chat-header">💬 我的专属聊天室</div>
-    <div class="chat-messages" id="messages"></div>
+    <div class="chat-box" id="chatBox">
+        <!-- 系统提示 -->
+        <div class="system-toast" id="systemToast">✅ 聊天室已连接，开始畅聊吧！</div>
 
-    <div class="chat-input">
-        <input type="text" id="textInput" placeholder="说点什么…">
-        <button onclick="sendText()">发送</button>
-        <button class="mic-btn" id="micBtn"
-            onmousedown="startVoice()"
-            onmouseup="stopVoice()"
-            ontouchstart="startVoice()"
-            ontouchend="stopVoice()">
-            🎤
-        </button>
+        <!-- 机器人初始问候 -->
+        <!-- 后续用 JS 动态插入 -->
     </div>
-</div>
 
-<div style="position:absolute;bottom:20px;">
-    <a href="index.html" class="back-btn">返回主页</a>
+    <div class="input-bar">
+        <button class="record-btn" id="recordBtn" title="按住说话">🎤</button>
+        <input type="text" id="textInput" placeholder="输入消息..." />
+        <button id="sendBtn">发送</button>
+    </div>
 </div>
 
 <script>
@@ -334,130 +351,137 @@ const currentUser = {
 
 /* ===== 机器人 ===== */
 const bots = [
-    { uid: "bot1", nickname: "张三", avatar: "张", text: "你好呀 👋" },
-    { uid: "bot2", nickname: "李四", avatar: "李", text: "欢迎来到聊天室～" },
-    { uid: "bot3", nickname: "王五", avatar: "王", text: "今天也要开心哦 🌈" }
+    { uid: "bot1", nickname: "张三", avatar: "张", texts: ["你好呀 👋", "今天天气不错～", "你今天开心吗？"] },
+    { uid: "bot2", nickname: "李四", avatar: "李", texts: ["欢迎来到聊天室～", "有什么我可以帮你的？", "别客气，随时找我～"] },
+    { uid: "bot3", nickname: "王五", avatar: "王", texts: ["今天也要开心哦 🌈", "记得多喝水～", "有什么好玩的事分享吗？"] }
 ];
 
-/* ===== 页面加载后机器人依次说话 ===== */
-window.onload = () => {
-    bots.forEach((bot, index) => {
-        setTimeout(() => {
-            renderMessage(bot.text, false, bot);
-        }, 800 * (index + 1));
-    });
-};
+/* ===== DOM 元素 ===== */
+const chatBox = document.getElementById("chatBox");
+const textInput = document.getElementById("textInput");
+const sendBtn = document.getElementById("sendBtn");
+const recordBtn = document.getElementById("recordBtn");
+const systemToast = document.getElementById("systemToast");
 
-/* ===== 文本发送 ===== */
-function sendText() {
-    const input = document.getElementById("textInput");
-    if (!input.value.trim()) return;
-    renderMessage(input.value, true, currentUser);
-    input.value = "";
+/* ===== 显示系统提示 ===== */
+function showSystemToast(msg) {
+    systemToast.textContent = msg;
+    systemToast.style.animation = "none";
+    void systemToast.offsetWidth; // 触发重绘
+    systemToast.style.animation = "toastInOut 3s ease forwards";
 }
 
 /* ===== 渲染消息 ===== */
-function renderMessage(text, isMe, user = currentUser) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "msg-wrapper " + (isMe ? "me" : "");
+function renderMessage(text, isSelf, sender) {
+    const msgDiv = document.createElement("div");
+    msgDiv.className = `message ${isSelf ? "self" : "other"}`;
 
-    const avatar = document.createElement("div");
-    avatar.className = "avatar-mini";
-    avatar.textContent = user.avatar;
+    const avatarSpan = document.createElement("span");
+    avatarSpan.className = "avatar";
+    avatarSpan.textContent = sender.avatar;
 
-    const content = document.createElement("div");
+    const nicknameSpan = document.createElement("span");
+    nicknameSpan.className = "nickname";
+    nicknameSpan.textContent = sender.nickname;
 
-    const nick = document.createElement("div");
-    nick.className = "nickname";
-    nick.textContent = user.nickname;
+    const textNode = document.createTextNode(text);
 
-    const msg = document.createElement("div");
-    msg.className = "msg";
-    msg.textContent = text;
+    msgDiv.appendChild(avatarSpan);
+    msgDiv.appendChild(nicknameSpan);
+    msgDiv.appendChild(textNode);
 
-    content.appendChild(nick);
-    content.appendChild(msg);
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(content);
-
-    document.getElementById("messages").appendChild(wrapper);
-    scrollBottom();
+    chatBox.appendChild(msgDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* ===== 语音（保持不变）===== */
-let mediaRecorder;
-let audioChunks = [];
+/* ===== 机器人初始问候 ===== */
+window.onload = () => {
+    showSystemToast("✅ 聊天室已连接，开始畅聊吧！");
 
-async function startVoice() {
-    try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        audioChunks = [];
-        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
-        mediaRecorder.start();
-        document.getElementById("micBtn").classList.add("recording");
-    } catch {
-        alert("麦克风权限被拒绝 😢");
-    }
+    bots.forEach((bot, index) => {
+        setTimeout(() => {
+            const randomText = bot.texts[Math.floor(Math.random() * bot.texts.length)];
+            renderMessage(randomText, false, bot);
+        }, 800 * (index + 1));
+    });
+
+    // 启动机器人随机回复定时器
+    startBotRandomReply();
+};
+
+/* ===== 机器人随机回复机制 ===== */
+let botReplyTimer = null;
+
+function startBotRandomReply() {
+    botReplyTimer = setInterval(() => {
+        // 随机选一个机器人
+        const randomBot = bots[Math.floor(Math.random() * bots.length)];
+        // 随机选一句台词
+        const randomText = randomBot.texts[Math.floor(Math.random() * randomBot.texts.length)];
+
+        // 随机延迟 1~3 秒（模拟“思考”）
+        setTimeout(() => {
+            renderMessage(randomText, false, randomBot);
+        }, Math.random() * 2000 + 1000);
+
+    }, 15000 + Math.random() * 15000); // 每 15~30 秒触发一次
 }
 
-mediaRecorder?.addEventListener("stop", async () => {
-    const blob = new Blob(audioChunks, { type: "audio/webm" });
-    const base64 = await blobToBase64(blob);
-    renderVoice(base64);
+/* ===== 文本发送 ===== */
+function sendText() {
+    const text = textInput.value.trim();
+    if (!text) return;
+
+    renderMessage(text, true, currentUser);
+    textInput.value = "";
+
+    // 可选：你发送后，机器人“立刻”回复一条（增强互动感）
+    setTimeout(() => {
+        const randomBot = bots[Math.floor(Math.random() * bots.length)];
+        const randomText = randomBot.texts[Math.floor(Math.random() * randomBot.texts.length)];
+        renderMessage(randomText, false, randomBot);
+    }, 1000 + Math.random() * 2000);
+}
+
+/* ===== 录音按钮模拟 ===== */
+let isRecording = false;
+
+recordBtn.addEventListener("mousedown", () => {
+    isRecording = true;
+    recordBtn.classList.add("recording");
+    recordBtn.textContent = "🔴";
+    // 模拟录音中...
+    setTimeout(() => {
+        if (isRecording) {
+            recordBtn.classList.remove("recording");
+            recordBtn.textContent = "🎤";
+            // 模拟识别出的文字
+            const fakeText = "这是一段模拟的语音消息 🎙️";
+            renderMessage(fakeText, true, currentUser);
+        }
+    }, 2000);
 });
 
-function stopVoice() {
-    mediaRecorder?.stop();
-    document.getElementById("micBtn").classList.remove("recording");
-}
+recordBtn.addEventListener("mouseup", () => {
+    isRecording = false;
+    recordBtn.classList.remove("recording");
+    recordBtn.textContent = "🎤";
+});
 
-function renderVoice(base64) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "msg-wrapper me";
+recordBtn.addEventListener("mouseleave", () => {
+    isRecording = false;
+    recordBtn.classList.remove("recording");
+    recordBtn.textContent = "🎤";
+});
 
-    const avatar = document.createElement("div");
-    avatar.className = "avatar-mini";
-    avatar.textContent = currentUser.avatar;
-
-    const content = document.createElement("div");
-
-    const nick = document.createElement("div");
-    nick.className = "nickname";
-    nick.textContent = currentUser.nickname;
-
-    const voice = document.createElement("div");
-    voice.className = "voice-msg";
-    voice.innerHTML = `
-        <div class="voice-wave">
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-            <div class="wave-bar"></div>
-        </div>
-        <div class="voice-duration">点击播放</div>
-    `;
-    voice.onclick = () => new Audio(base64).play();
-
-    content.appendChild(nick);
-    content.appendChild(voice);
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(content);
-
-    document.getElementById("messages").appendChild(wrapper);
-    scrollBottom();
-}
-
-function scrollBottom() {
-    const box = document.getElementById("messages");
-    box.scrollTop = box.scrollHeight;
-}
-
-function blobToBase64(blob) {
-    return new Promise(resolve => {
-        const r = new FileReader();
-        r.onloadend = () => resolve(r.result);
-        r.readAsDataURL(blob);
-    });
-}
+/* ===== 事件绑定 ===== */
+sendBtn.addEventListener("click", sendText);
+textInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+        sendText();
+    }
+});
 </script>
+
+</body>
+</html>
