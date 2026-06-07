@@ -261,6 +261,41 @@ body::after {
     text-decoration: none;
     border-radius: 6px;
 }
+    /* ===== 系统提示 ===== */
+.system-toast {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    z-index: 10;
+    opacity: 0;
+    animation: toastInOut 3s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes toastInOut {
+    0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+    15% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    85% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+    }
+}
 </style>
 </head>
 
