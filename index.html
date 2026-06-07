@@ -205,6 +205,31 @@ p {
     font-size: 14px;
     color: #888;
 }
+    /* ===== 建设中彩蛋 ===== */
+.construction-toast {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background: rgba(255,255,255,0.9);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #333;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 999;
+    animation: fadeSlideIn 1s ease forwards;
+}
+
+@keyframes fadeSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 </style>
 </head>
 
@@ -232,6 +257,8 @@ p {
     <a href="happychat.html" class="planet-button" target="_blank">我的专属聊天室</a>
     <a href="introduction.html" class="planet-button" target="_blank">我是谁？</a>
 </div>
-
+<div class="construction-toast">
+    🚧 网站建设中，聊天室功能即将上线
+</div>
 </body>
 </html>
