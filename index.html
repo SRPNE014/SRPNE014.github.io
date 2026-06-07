@@ -89,10 +89,10 @@ body::after {
     top: -100px;
     left: -100px;
     width: 2px;
-    height: 80px;
+    height: 90px;
     background: linear-gradient(180deg, #fff, transparent);
     opacity: 0;
-    transform: rotate(45deg);
+    transform: rotate(-45deg);
     animation: meteorFall 6s ease-in infinite;
     z-index: 0;
 }
@@ -106,14 +106,14 @@ body::after {
 @keyframes meteorFall {
     0% {
         opacity: 0;
-        transform: translate(0, 0) rotate(45deg);
+        transform: translate(0, 0) rotate(-45deg);
     }
     10% {
         opacity: 1;
     }
     100% {
         opacity: 0;
-        transform: translate(600px, 600px) rotate(45deg);
+        transform: translate(600px, 600px) rotate(-45deg);
     }
 }
 
