@@ -6,6 +6,7 @@
 <title>我的专属聊天室</title>
 
 <style>
+/* ===== 星空背景（和你主页一致）===== */
 body {
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background: #0b0f1a;
@@ -111,114 +112,20 @@ body::after {
     gap: 10px;
 }
 
-.msg {
-    padding: 8px 12px;
-    background: #eef4ff;
-    border-radius: 8px;
-    max-width: 80%;
-    font-size: 15px;
-    color: #333;
-}
-
-.msg.me {
-    background: #d2f8d2;
-    align-self: flex-end;
-}
-
-/* 语音消息 */
-.voice-msg {
+/* ===== 消息进场动画 ===== */
+.msg-wrapper {
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 8px;
-    padding: 8px 12px;
-    background: #d2f8d2;
-    border-radius: 20px;
-    max-width: 70%;
-    align-self: flex-end;
-    cursor: pointer;
-}
-
-.voice-icon {
-    font-size: 18px;
-}
-
-.voice-duration {
-    font-size: 12px;
-    color: #555;
-}
-
-/* 输入区 */
-.chat-input {
-    display: flex;
-    border-top: 1px solid #ddd;
-}
-
-.chat-input input {
-    flex: 1;
-    border: none;
-    padding: 12px;
-    font-size: 14px;
-    outline: none;
-}
-
-.chat-input button {
-    border: none;
-    background: #add8e6;
-    padding: 0 16px;
-    cursor: pointer;
-    font-weight: bold;
-    color: #333;
-}
-
-/* 麦克风按钮 */
-.mic-btn {
-    border: none;
-    background: #ff6b6b;
-    color: #fff;
-    font-size: 20px;
-    padding: 0 12px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.mic-btn.recording {
-    background: #ff3b3b;
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
-.back-btn {
-    margin-top: 15px;
-    display: inline-block;
-    padding: 10px 20px;
-    background: #add8e6;
-    color: #fff;
-    font-weight: bold;
-    text-decoration: none;
-    border-radius: 6px;
-}
-    /* ===== 消息进场动画 ===== */
-.msg {
-    padding: 8px 12px;
-    background: #eef4ff;
-    border-radius: 8px;
-    max-width: 80%;
-    font-size: 15px;
-    color: #333;
-    word-break: break-word;
+    max-width: 85%;
     opacity: 0;
     transform: scale(0.95);
     animation: msgIn 0.3s ease forwards;
 }
 
-.msg.me {
-    background: #d2f8d2;
+.msg-wrapper.me {
     align-self: flex-end;
+    flex-direction: row-reverse;
 }
 
 @keyframes msgIn {
@@ -226,19 +133,6 @@ body::after {
         opacity: 1;
         transform: scale(1);
     }
-}
-
-/* ===== 头像 + 昵称 ===== */
-.msg-wrapper {
-    display: flex;
-    align-items: flex-end;
-    gap: 8px;
-    max-width: 85%;
-}
-
-.msg-wrapper.me {
-    align-self: flex-end;
-    flex-direction: row-reverse;
 }
 
 .avatar-mini {
@@ -258,6 +152,19 @@ body::after {
     font-size: 12px;
     color: #888;
     margin-bottom: 4px;
+}
+
+.msg {
+    padding: 8px 12px;
+    background: #eef4ff;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #333;
+    word-break: break-word;
+}
+
+.msg.me {
+    background: #d2f8d2;
 }
 
 /* ===== 语音波形 ===== */
@@ -300,6 +207,60 @@ body::after {
     font-size: 12px;
     color: #555;
 }
+
+/* ===== 输入区 ===== */
+.chat-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    border: none;
+    padding: 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+.chat-input button {
+    border: none;
+    background: #add8e6;
+    padding: 0 16px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+}
+
+.mic-btn {
+    border: none;
+    background: #ff6b6b;
+    color: #fff;
+    font-size: 20px;
+    padding: 0 12px;
+    cursor: pointer;
+}
+
+.mic-btn.recording {
+    background: #ff3b3b;
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.back-btn {
+    margin-top: 15px;
+    display: inline-block;
+    padding: 10px 20px;
+    background: #add8e6;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+}
 </style>
 </head>
 
@@ -309,16 +270,18 @@ body::after {
 
 <div class="chat-box">
     <div class="chat-header">💬 我的专属聊天室</div>
-
-    <div class="chat-messages" id="messages">
-        <div class="msg">欢迎来到夏洛希的聊天室 ✨</div>
-        <div class="msg me">今天试试语音消息吧 🎤</div>
-    </div>
+    <div class="chat-messages" id="messages"></div>
 
     <div class="chat-input">
         <input type="text" id="textInput" placeholder="说点什么…">
         <button onclick="sendText()">发送</button>
-        <button class="mic-btn" id="micBtn" onmousedown="startVoice()" onmouseup="stopVoice()" ontouchstart="startVoice()" ontouchend="stopVoice()">🎤</button>
+        <button class="mic-btn" id="micBtn"
+            onmousedown="startVoice()"
+            onmouseup="stopVoice()"
+            ontouchstart="startVoice()"
+            ontouchend="stopVoice()">
+            🎤
+        </button>
     </div>
 </div>
 
@@ -327,56 +290,108 @@ body::after {
 </div>
 
 <script>
+/* ===== 当前用户（以后直接换成 Firebase Auth）===== */
+const currentUser = {
+    uid: "me",
+    nickname: "夏洛希",
+    avatar: "夏"
+};
+
 /* ===== 文本消息 ===== */
 function sendText() {
     const input = document.getElementById("textInput");
     if (!input.value.trim()) return;
+    renderMessage(input.value, true);
+    input.value = "";
+}
+
+/* ===== 语音消息 ===== */
+let mediaRecorder;
+let audioChunks = [];
+
+async function startVoice() {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.start();
+        document.getElementById("micBtn").classList.add("recording");
+    } catch {
+        alert("麦克风权限被拒绝 😢");
+    }
+}
+
+mediaRecorder?.addEventListener("stop", async () => {
+    const blob = new Blob(audioChunks, { type: "audio/webm" });
+    const base64 = await blobToBase64(blob);
+    renderVoice(base64);
+});
+
+function stopVoice() {
+    mediaRecorder?.stop();
+    document.getElementById("micBtn").classList.remove("recording");
+}
+
+/* ===== 渲染 ===== */
+function renderMessage(text, isMe) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "msg-wrapper " + (isMe ? "me" : "");
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar-mini";
+    avatar.textContent = isMe ? currentUser.avatar : "?";
+
+    const content = document.createElement("div");
+
+    const nick = document.createElement("div");
+    nick.className = "nickname";
+    nick.textContent = isMe ? currentUser.nickname : "访客";
 
     const msg = document.createElement("div");
-    msg.className = "msg me";
-    msg.textContent = input.value;
-    document.getElementById("messages").appendChild(msg);
-    input.value = "";
+    msg.className = "msg";
+    msg.textContent = text;
+
+    content.appendChild(nick);
+    content.appendChild(msg);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(content);
+
+    document.getElementById("messages").appendChild(wrapper);
     scrollBottom();
 }
 
-/* ===== 语音消息（模拟版）===== */
-let voiceTimer;
-let voiceStart;
-
-function startVoice() {
-    const btn = document.getElementById("micBtn");
-    btn.classList.add("recording");
-    voiceStart = Date.now();
-}
-
-function stopVoice() {
-    const btn = document.getElementById("micBtn");
-    btn.classList.remove("recording");
-
-    const duration = Math.max(1, Math.round((Date.now() - voiceStart) / 1000));
-    createVoiceMsg(duration);
-}
-
-function createVoiceMsg(seconds) {
+function renderVoice(base64) {
     const wrapper = document.createElement("div");
-    wrapper.className = "voice-msg";
+    wrapper.className = "msg-wrapper me";
 
-    const icon = document.createElement("span");
-    icon.className = "voice-icon";
-    icon.textContent = "🎵";
+    const avatar = document.createElement("div");
+    avatar.className = "avatar-mini";
+    avatar.textContent = currentUser.avatar;
 
-    const durationText = document.createElement("span");
-    durationText.className = "voice-duration";
-    durationText.textContent = seconds + "″";
+    const content = document.createElement("div");
 
-    wrapper.appendChild(icon);
-    wrapper.appendChild(durationText);
+    const nick = document.createElement("div");
+    nick.className = "nickname";
+    nick.textContent = currentUser.nickname;
 
-    // 模拟播放
-    wrapper.onclick = () => {
-        alert("（模拟播放）时长：" + seconds + " 秒");
-    };
+    const voice = document.createElement("div");
+    voice.className = "voice-msg";
+    voice.innerHTML = `
+        <div class="voice-wave">
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+            <div class="wave-bar"></div>
+        </div>
+        <div class="voice-duration">点击播放</div>
+    `;
+    voice.onclick = () => new Audio(base64).play();
+
+    content.appendChild(nick);
+    content.appendChild(voice);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(content);
 
     document.getElementById("messages").appendChild(wrapper);
     scrollBottom();
@@ -385,6 +400,14 @@ function createVoiceMsg(seconds) {
 function scrollBottom() {
     const box = document.getElementById("messages");
     box.scrollTop = box.scrollHeight;
+}
+
+function blobToBase64(blob) {
+    return new Promise(resolve => {
+        const r = new FileReader();
+        r.onloadend = () => resolve(r.result);
+        r.readAsDataURL(blob);
+    });
 }
 </script>
 
