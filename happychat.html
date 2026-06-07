@@ -575,6 +575,22 @@ body {
         <button id="signBtn">📅 签到</button>
         <div class="points-bar" id="pointsBar">💰 10</div>
     </div>
+    <div class="input-bar">
+    <button class="plus-btn" id="plusBtn">+</button>
+
+    <div class="emoji-panel" id="emojiPanel">
+        <span>✅</span>
+        <span>👍</span>
+        <span>😄</span>
+        <span>👌</span>
+        <span>🤔</span>
+        <span>🔍</span>
+    </div>
+
+    <button class="record-btn" id="recordBtn">...</button>
+    <textarea id="textInput"></textarea>
+    <button id="sendBtn">发送</button>
+</div>
 
     <div class="header">💬 我的专属聊天室</div>
 
@@ -656,38 +672,57 @@ if (lastLogin !== today) {
     localStorage.setItem("lastLogin", today);
     showSystemToast("🎉 每日登录 +10 积分");
 }
-
 localStorage.setItem("points", points);
-/* ===== 签到系统（防刷加强版）===== */
+
+    /* ===== 签到系统（连续天数）===== */
 const SIGN_KEY = "lastSignDate";
+const STREAK_KEY = "signStreak";
+
+function getStreak() {
+    return parseInt(localStorage.getItem(STREAK_KEY)) || 0;
+}
+
+function updateStreak() {
+    const lastSign = localStorage.getItem(SIGN_KEY);
+    let streak = getStreak();
+
+    if (lastSign === today) return streak; // 今天已签
+
+    if (lastSign === new Date(Date.now() - 86400000).toDateString()) {
+        streak++; // 连续
+    } else {
+        streak = 1; // 断了
+    }
+
+    localStorage.setItem(SIGN_KEY, today);
+    localStorage.setItem(STREAK_KEY, streak);
+    return streak;
+}
 
 function checkSignStatus() {
     const lastSign = localStorage.getItem(SIGN_KEY);
+    const streak = getStreak();
+
     if (lastSign === today) {
         signBtn.disabled = true;
-        signBtn.textContent = "✅ 已签到";
-        return true;
+        signBtn.innerHTML = `✅ 已签到 · 连续 ${streak} 天`;
     } else {
         signBtn.disabled = false;
         signBtn.textContent = "📅 签到";
-        return false;
     }
 }
 
 signBtn.onclick = () => {
-    // ✅ 双重保险
     if (signBtn.disabled) return;
-    if (checkSignStatus()) return;
 
+    const streak = updateStreak();
     points += 10;
-    localStorage.setItem(SIGN_KEY, today);
     updatePoints();
 
-    // ✅ 立刻锁死按钮
     signBtn.disabled = true;
-    signBtn.textContent = "✅ 已签到";
+    signBtn.innerHTML = `✅ 已签到 · 连续 ${streak} 天`;
 
-    showSystemToast("📅 签到成功 +10 积分");
+    showSystemToast(`📅 签到成功 +10 积分 · 连续 ${streak} 天`);
 };
 
 /* ===== 商城 ===== */
