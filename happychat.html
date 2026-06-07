@@ -6,10 +6,11 @@
 <title>我的专属聊天室</title>
 
 <style>
-/* ===== 星空背景（和你主页一致）===== */
+/* ===== iOS 26 风格：纯白 + 毛玻璃 ===== */
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: #0b0f1a;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+                 "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #ffffff;          /* ✅ 纯白 */
     margin: 0;
     padding: 0;
     height: 100vh;
@@ -18,33 +19,6 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-}
-
-body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image:
-        radial-gradient(1px 1px at 10% 20%, #fff 1%, transparent 1%),
-        radial-gradient(1px 1px at 30% 60%, #fff 1%, transparent 1%);
-    z-index: -3;
-}
-
-body::after {
-    content: "";
-    position: fixed;
-    inset: -50%;
-    background: conic-gradient(
-        from 0deg,
-        #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd, #ff6b6b
-    );
-    animation: rotate 20s linear infinite;
-    z-index: -4;
-}
-
-@keyframes rotate {
-    100% { transform: rotate(360deg); }
 }
 
 /* ===== 聊天容器 ===== */
@@ -53,11 +27,13 @@ body::after {
     max-width: 900px;
     height: 90vh;
     max-height: 700px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    backdrop-filter: blur(12px);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    background: rgba(245, 245, 247, 0.85); /* iOS 灰白 */
+    border-radius: 22px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.08),
+        0 20px 60px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
     overflow: hidden;
@@ -68,11 +44,11 @@ body::after {
 .header {
     padding: 16px 20px;
     text-align: center;
-    color: white;
-    font-size: 18px;
-    font-weight: bold;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.2);
+    font-size: 17px;
+    font-weight: 600;
+    color: #000;
+    background: rgba(255, 255, 255, 0.6);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
 }
 
 /* ===== 消息区域 ===== */
@@ -83,7 +59,6 @@ body::after {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    position: relative;
 }
 
 /* ===== 系统提示 ===== */
@@ -122,7 +97,7 @@ body::after {
     }
 }
 
-/* ===== 消息项 ===== */
+/* ===== 消息气泡 ===== */
 .message {
     max-width: 75%;
     padding: 12px 16px;
@@ -132,7 +107,6 @@ body::after {
     word-wrap: break-word;
     animation: fadeIn 0.3s ease;
     position: relative;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 @keyframes fadeIn {
@@ -141,15 +115,15 @@ body::after {
 }
 
 .message.self {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+    background: #007AFF;   /* iOS 蓝 */
+    color: #fff;
     align-self: flex-end;
     border-bottom-right-radius: 4px;
 }
 
 .message.other {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: #e9e9eb;   /* iOS 灰 */
+    color: #000;
     align-self: flex-start;
     border-bottom-left-radius: 4px;
 }
@@ -158,30 +132,30 @@ body::after {
     width: 32px;
     height: 32px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+    background: linear-gradient(135deg, #34c759, #30d158);
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
+    font-weight: 600;
     font-size: 14px;
+    color: #fff;
     margin-right: 8px;
     vertical-align: middle;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
 }
 
 .nickname {
-    font-weight: bold;
+    font-weight: 600;
     margin-bottom: 4px;
     display: block;
     font-size: 13px;
-    opacity: 0.9;
+    opacity: 0.8;
 }
 
 /* ===== 输入栏 ===== */
 .input-bar {
-    padding: 16px 20px;
-    background: rgba(0, 0, 0, 0.2);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.08);
     display: flex;
     gap: 10px;
     align-items: center;
@@ -189,63 +163,45 @@ body::after {
 
 #textInput {
     flex: 1;
-    padding: 12px 16px;
+    padding: 10px 14px;
     border: none;
-    border-radius: 24px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    border-radius: 20px;
+    background: #f2f2f7;
     font-size: 15px;
     outline: none;
-    transition: background 0.2s;
 }
 
 #textInput:focus {
-    background: rgba(255, 255, 255, 0.15);
+    background: #eaeaef;
 }
 
 #sendBtn {
-    padding: 12px 24px;
+    padding: 10px 20px;
     border: none;
-    border-radius: 24px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    font-weight: bold;
+    border-radius: 20px;
+    background: #007AFF;
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
     cursor: pointer;
-    transition: transform 0.1s, box-shadow 0.2s;
 }
 
-#sendBtn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-#sendBtn:active {
-    transform: translateY(0);
-}
-
-/* ===== 录音按钮 ===== */
 .record-btn {
-    padding: 12px 16px;
+    width: 40px;
+    height: 40px;
     border: none;
     border-radius: 50%;
-    background: linear-gradient(135deg, #ff6b6b, #ff8e53);
-    color: white;
-    cursor: pointer;
+    background: #ff3b30;
+    color: #fff;
     font-size: 18px;
-    transition: transform 0.1s, box-shadow 0.2s;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.record-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
-}
-
 .record-btn.recording {
     animation: pulse 1s infinite;
-    background: linear-gradient(135deg, #ff4757, #ff6b6b);
 }
 
 @keyframes pulse {
@@ -254,95 +210,62 @@ body::after {
     100% { transform: scale(1); }
 }
 
-/* ===== 移动端适配 ===== */
+/* ===== 移动端 ===== */
 @media (max-width: 768px) {
     .chat-container {
-        width: 98vw;
-        height: 95vh;
+        width: 100vw;
+        height: 100vh;
         max-height: none;
-        border-radius: 12px;
+        border-radius: 0;
     }
 
     .header {
-        padding: 12px 16px;
+        padding: 14px 16px;
         font-size: 16px;
     }
 
-    .chat-box {
-        padding: 16px;
-        gap: 10px;
-    }
-
     .message {
-        max-width: 85%;
-        padding: 10px 14px;
+        max-width: 82%;
         font-size: 14px;
-    }
-
-    .input-bar {
-        padding: 12px 16px;
-        gap: 8px;
     }
 
     #textInput {
-        padding: 10px 14px;
         font-size: 14px;
+        padding: 9px 12px;
     }
 
     #sendBtn {
-        padding: 10px 20px;
+        padding: 9px 16px;
         font-size: 14px;
     }
 
     .record-btn {
-        padding: 10px 14px;
+        width: 36px;
+        height: 36px;
         font-size: 16px;
     }
 }
-
-/* ===== 滚动条美化 ===== */
-.chat-box::-webkit-scrollbar {
-    width: 6px;
-}
-
-.chat-box::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
-}
-
-.chat-box::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-}
-
-.chat-box::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
-}
 </style>
-
 </head>
+
 <body>
 
 <div class="chat-container">
-    <div class="header">🌟 我的专属聊天室</div>
+    <div class="header">💬 我的专属聊天室</div>
 
     <div class="chat-box" id="chatBox">
-        <!-- 系统提示 -->
-        <div class="system-toast" id="systemToast">✅ 聊天室已连接，开始畅聊吧！</div>
-
-        <!-- 机器人初始问候 -->
-        <!-- 后续用 JS 动态插入 -->
+        <div class="system-toast" id="systemToast">✅ 聊天室已连接</div>
     </div>
 
     <div class="input-bar">
-        <button class="record-btn" id="recordBtn" title="按住说话">🎤</button>
-        <input type="text" id="textInput" placeholder="输入消息..." />
+        <button class="record-btn" id="recordBtn">🎤</button>
+        <input type="text" id="textInput" placeholder="iMessage">
         <button id="sendBtn">发送</button>
     </div>
 </div>
 
 <script>
-/* ===== 当前用户 ===== */
+/* ===== 用户 ===== */
 const currentUser = {
     uid: "me",
     nickname: "夏洛希",
@@ -352,135 +275,102 @@ const currentUser = {
 /* ===== 机器人 ===== */
 const bots = [
     { uid: "bot1", nickname: "张三", avatar: "张", texts: ["你好呀 👋", "今天天气不错～", "你今天开心吗？"] },
-    { uid: "bot2", nickname: "李四", avatar: "李", texts: ["欢迎来到聊天室～", "有什么我可以帮你的？", "别客气，随时找我～"] },
-    { uid: "bot3", nickname: "王五", avatar: "王", texts: ["今天也要开心哦 🌈", "记得多喝水～", "有什么好玩的事分享吗？"] }
+    { uid: "bot2", nickname: "李四", avatar: "李", texts: ["欢迎来到聊天室～", "有什么我可以帮你的？", "别客气～"] },
+    { uid: "bot3", nickname: "王五", avatar: "王", texts: ["今天也要开心哦 🌈", "记得多喝水～", "分享点好玩的呗"] }
 ];
 
-/* ===== DOM 元素 ===== */
+/* ===== DOM ===== */
 const chatBox = document.getElementById("chatBox");
 const textInput = document.getElementById("textInput");
 const sendBtn = document.getElementById("sendBtn");
 const recordBtn = document.getElementById("recordBtn");
 const systemToast = document.getElementById("systemToast");
 
-/* ===== 显示系统提示 ===== */
+/* ===== 系统提示 ===== */
 function showSystemToast(msg) {
     systemToast.textContent = msg;
     systemToast.style.animation = "none";
-    void systemToast.offsetWidth; // 触发重绘
+    void systemToast.offsetWidth;
     systemToast.style.animation = "toastInOut 3s ease forwards";
 }
 
 /* ===== 渲染消息 ===== */
 function renderMessage(text, isSelf, sender) {
-    const msgDiv = document.createElement("div");
-    msgDiv.className = `message ${isSelf ? "self" : "other"}`;
+    const msg = document.createElement("div");
+    msg.className = `message ${isSelf ? "self" : "other"}`;
 
-    const avatarSpan = document.createElement("span");
-    avatarSpan.className = "avatar";
-    avatarSpan.textContent = sender.avatar;
+    const avatar = document.createElement("span");
+    avatar.className = "avatar";
+    avatar.textContent = sender.avatar;
 
-    const nicknameSpan = document.createElement("span");
-    nicknameSpan.className = "nickname";
-    nicknameSpan.textContent = sender.nickname;
+    const nick = document.createElement("span");
+    nick.className = "nickname";
+    nick.textContent = sender.nickname;
 
     const textNode = document.createTextNode(text);
 
-    msgDiv.appendChild(avatarSpan);
-    msgDiv.appendChild(nicknameSpan);
-    msgDiv.appendChild(textNode);
-
-    chatBox.appendChild(msgDiv);
+    msg.appendChild(avatar);
+    msg.appendChild(nick);
+    msg.appendChild(textNode);
+    chatBox.appendChild(msg);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* ===== 机器人初始问候 ===== */
+/* ===== 机器人问候 ===== */
 window.onload = () => {
-    showSystemToast("✅ 聊天室已连接，开始畅聊吧！");
+    showSystemToast("✅ 聊天室已连接");
 
-    bots.forEach((bot, index) => {
+    bots.forEach((bot, i) => {
         setTimeout(() => {
-            const randomText = bot.texts[Math.floor(Math.random() * bot.texts.length)];
-            renderMessage(randomText, false, bot);
-        }, 800 * (index + 1));
+            const t = bot.texts[Math.floor(Math.random() * bot.texts.length)];
+            renderMessage(t, false, bot);
+        }, 800 * (i + 1));
     });
 
-    // 启动机器人随机回复定时器
     startBotRandomReply();
 };
 
-/* ===== 机器人随机回复机制 ===== */
-let botReplyTimer = null;
+/* ===== 随机回复 ===== */
+let botTimer = setInterval(() => {
+    const bot = bots[Math.floor(Math.random() * bots.length)];
+    const text = bot.texts[Math.floor(Math.random() * bot.texts.length)];
+    setTimeout(() => {
+        renderMessage(text, false, bot);
+    }, Math.random() * 2000);
+}, 15000 + Math.random() * 15000);
 
-function startBotRandomReply() {
-    botReplyTimer = setInterval(() => {
-        // 随机选一个机器人
-        const randomBot = bots[Math.floor(Math.random() * bots.length)];
-        // 随机选一句台词
-        const randomText = randomBot.texts[Math.floor(Math.random() * randomBot.texts.length)];
+function startBotRandomReply() {}
 
-        // 随机延迟 1~3 秒（模拟“思考”）
-        setTimeout(() => {
-            renderMessage(randomText, false, randomBot);
-        }, Math.random() * 2000 + 1000);
-
-    }, 15000 + Math.random() * 15000); // 每 15~30 秒触发一次
-}
-
-/* ===== 文本发送 ===== */
+/* ===== 发送 ===== */
 function sendText() {
     const text = textInput.value.trim();
     if (!text) return;
-
     renderMessage(text, true, currentUser);
     textInput.value = "";
 
-    // 可选：你发送后，机器人“立刻”回复一条（增强互动感）
     setTimeout(() => {
-        const randomBot = bots[Math.floor(Math.random() * bots.length)];
-        const randomText = randomBot.texts[Math.floor(Math.random() * randomBot.texts.length)];
-        renderMessage(randomText, false, randomBot);
+        const bot = bots[Math.floor(Math.random() * bots.length)];
+        const t = bot.texts[Math.floor(Math.random() * bot.texts.length)];
+        renderMessage(t, false, bot);
     }, 1000 + Math.random() * 2000);
 }
 
-/* ===== 录音按钮模拟 ===== */
-let isRecording = false;
+sendBtn.onclick = sendText;
+textInput.addEventListener("keydown", e => e.key === "Enter" && sendText());
 
-recordBtn.addEventListener("mousedown", () => {
-    isRecording = true;
+/* ===== 录音模拟 ===== */
+let recording = false;
+recordBtn.onmousedown = () => {
+    recording = true;
     recordBtn.classList.add("recording");
     recordBtn.textContent = "🔴";
-    // 模拟录音中...
-    setTimeout(() => {
-        if (isRecording) {
-            recordBtn.classList.remove("recording");
-            recordBtn.textContent = "🎤";
-            // 模拟识别出的文字
-            const fakeText = "这是一段模拟的语音消息 🎙️";
-            renderMessage(fakeText, true, currentUser);
-        }
-    }, 2000);
-});
-
-recordBtn.addEventListener("mouseup", () => {
-    isRecording = false;
+};
+recordBtn.onmouseup = () => {
+    recording = false;
     recordBtn.classList.remove("recording");
     recordBtn.textContent = "🎤";
-});
-
-recordBtn.addEventListener("mouseleave", () => {
-    isRecording = false;
-    recordBtn.classList.remove("recording");
-    recordBtn.textContent = "🎤";
-});
-
-/* ===== 事件绑定 ===== */
-sendBtn.addEventListener("click", sendText);
-textInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-        sendText();
-    }
-});
+    renderMessage("这是一段语音消息 🎙️", true, currentUser);
+};
 </script>
 
 </body>
