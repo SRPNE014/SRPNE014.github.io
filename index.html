@@ -18,29 +18,34 @@
             position: relative;
         }
 
+        /* ===== 彩虹背景动画（21s 与按钮同步）===== */
         body::before {
             content: "";
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                rgba(74, 144, 226, 0.05),
-                rgba(255, 193, 7, 0.05),
-                rgba(74, 144, 226, 0.05)
+            inset: -50%;
+            background: conic-gradient(
+                from 0deg,
+                #ff0000,
+                #ff7f00,
+                #ffff00,
+                #00ff00,
+                #00ffff,
+                #0000ff,
+                #8b00ff,
+                #ff0000
             );
-            animation: gradientFlow 10s linear infinite;
+            animation: rainbowBG 21s linear infinite;
             z-index: -1;
+            opacity: 0.25;
+            filter: blur(80px);
         }
 
-        @keyframes gradientFlow {
+        @keyframes rainbowBG {
             0% {
-                transform: translateX(-25%);
+                transform: rotate(0deg);
             }
             100% {
-                transform: translateX(25%);
+                transform: rotate(360deg);
             }
         }
 
@@ -113,66 +118,33 @@
             text-decoration: line-through;
         }
 
+        /* ===== 彩虹按钮动画 ===== */
         .planet-button {
             display: inline-block;
             margin-top: 20px;
             padding: 12px 24px;
-            background-color: #add8e6;
             color: #ffffff;
             font-size: 16px;
             font-weight: bold;
             text-decoration: none;
             border-radius: 6px;
-            transition: background-color 0.3s ease;
-            cursor: pointer;
-        }
-        /* ===== 彩虹按钮动画 ===== */
-        .planet-button {
             animation: rainbowButton 21s linear infinite;
+            transition: filter 0.3s ease;
         }
 
         @keyframes rainbowButton {
-            0%      { background-color: #ff0000; } /* 红 */
-            14.28%  { background-color: #ff7f00; } /* 橙 */
-            28.57%  { background-color: #ffff00; } /* 黄 */
-            42.85%  { background-color: #00ff00; } /* 绿 */
-            57.14%  { background-color: #00ffff; } /* 青 */
-            71.42%  { background-color: #0000ff; } /* 蓝 */
-            85.71%  { background-color: #8b00ff; } /* 紫 */
-            100%    { background-color: #ff0000; } /* 回到红 */
-        }
-        .planet-button:hover {
-            fliter: brightness(1.05);
-            /* ===== 彩虹背景动画（与按钮同步 21s）===== */
-        body::before {
-            content: "";
-            position: absolute;
-            inset: -50%;               /* 比屏幕更大，防止边缘露白 */
-            background: conic-gradient(
-                from 0deg,
-                #ff0000,
-                #ff7f00,
-                #ffff00,
-                #00ff00,
-                #00ffff,
-                #0000ff,
-                #8b00ff,
-                #ff0000
-            );
-            animation: rainbowBG 21s linear infinite;
-            z-index: -1;
-            opacity: 0.25;           /* 👈 关键：降低亮度，护眼 */
-            filter: blur(80px);      /* 梦幻模糊 */
+            0%      { background-color: #ff0000; }
+            14.28%  { background-color: #ff7f00; }
+            28.57%  { background-color: #ffff00; }
+            42.85%  { background-color: #00ff00; }
+            57.14%  { background-color: #00ffff; }
+            71.42%  { background-color: #0000ff; }
+            85.71%  { background-color: #8b00ff; }
+            100%    { background-color: #ff0000; }
         }
 
-        @keyframes rainbowBG {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+        .planet-button:hover {
+            filter: brightness(1.05);
         }
     </style>
 </head>
@@ -191,10 +163,7 @@
             3860957951@qq.com<br>
         </div>
 
-        <!-- 原有按钮 -->
         <a href="planet-intro.html" class="planet-button" target="_blank">什么是星球阁？</a>
-
-        <!-- 新增按钮：我是谁 -->
         <a href="introduction.html" class="planet-button" target="_blank">我是谁？</a>
     </div>
 </body>
