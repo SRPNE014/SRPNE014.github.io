@@ -128,8 +128,23 @@
         }
 
         .planet-button:hover {
-            background-color: #87ceeb;
+            fliter: brightness(1.15);
         }
+        /* ===== 彩虹按钮动画 ===== */
+.planet-button {
+    animation: rainbowButton 21s linear infinite;
+}
+
+@keyframes rainbowButton {
+    0%      { background-color: #ff0000; } /* 红 */
+    14.28%  { background-color: #ff7f00; } /* 橙 */
+    28.57%  { background-color: #ffff00; } /* 黄 */
+    42.85%  { background-color: #00ff00; } /* 绿 */
+    57.14%  { background-color: #00ffff; } /* 青 */
+    71.42%  { background-color: #0000ff; } /* 蓝 */
+    85.71%  { background-color: #8b00ff; } /* 紫 */
+    100%    { background-color: #ff0000; } /* 回到红 */
+}
     </style>
 </head>
 <body>
