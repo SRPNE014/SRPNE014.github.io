@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>我的专属聊天室</title>
+
+<style>
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #0b0f1a;
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 10% 20%, #fff 1%, transparent 1%),
+        radial-gradient(1px 1px at 30% 60%, #fff 1%, transparent 1%);
+    z-index: -3;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255,255,255,0.08) 30deg,
+        transparent 60deg,
+        transparent 180deg,
+        rgba(255,255,255,0.08) 210deg,
+        transparent 240deg,
+        transparent 360deg
+    );
+    animation: starTrail 40s linear infinite;
+    z-index: -2;
+    filter: blur(6px);
+}
+
+@keyframes starTrail {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.rainbow-bg {
+    position: fixed;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        #ff0000,
+        #ff7f00,
+        #ffff00,
+        #00ff00,
+        #00ffff,
+        #0000ff,
+        #8b00ff,
+        #ff0000
+    );
+    animation: rainbowSpin 21s linear infinite;
+    z-index: -1;
+    opacity: 0.25;
+    filter: blur(120px);
+}
+
+@keyframes rainbowSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.chat-box {
+    width: 90%;
+    max-width: 420px;
+    height: 70vh;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.chat-header {
+    padding: 15px;
+    font-weight: bold;
+    font-size: 18px;
+    background: rgba(173,216,230,0.6);
+    color: #333;
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    font-size: 15px;
+    color: #444;
+}
+
+.msg {
+    margin-bottom: 10px;
+    padding: 8px 12px;
+    background: #eef4ff;
+    border-radius: 8px;
+    max-width: 80%;
+}
+
+.msg.me {
+    background: #d2f8d2;
+    align-self: flex-end;
+}
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+}
+
+.chat-input input {
+    flex: 1;
+    border: none;
+    padding: 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+.chat-input button {
+    border: none;
+    background: #add8e6;
+    padding: 0 16px;
+    cursor: pointer;
+    font-weight: bold;
+    color: #333;
+}
+
+.back-btn {
+    margin-top: 15px;
+    display: inline-block;
+    padding: 10px 20px;
+    background: #add8e6;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="rainbow-bg"></div>
+
+<div class="chat-box">
+    <div class="chat-header">💬 我的专属聊天室</div>
+    <div class="chat-messages">
+        <div class="msg">欢迎来到夏洛希的聊天室 ✨</div>
+        <div class="msg me">今天心情怎么样？</div>
+        <div class="msg">一起加油吧 🌈</div>
+    </div>
+    <div class="chat-input">
+        <input type="text" placeholder="说点什么…">
+        <button>发送</button>
+    </div>
+</div>
+
+<div style="position:absolute;bottom:20px;">
+    <a href="index.html" class="back-btn">返回主页</a>
+</div>
+
+</body>
+</html>
