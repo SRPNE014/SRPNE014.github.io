@@ -76,22 +76,10 @@ body {
 }
 
 @keyframes toastInOut {
-    0% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-10px);
-    }
-    15% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-    85% {
-        opacity: 1;
-        transform: translateX(-50%) translateY(0);
-    }
-    100% {
-        opacity: 0;
-        transform: translateX(-50%) translateY(-10px);
-    }
+    0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
 }
 
 /* ===== 消息气泡 ===== */
@@ -103,7 +91,7 @@ body {
     line-height: 1.5;
     word-wrap: break-word;
     animation: fadeIn 0.3s ease;
-    position: relative;
+    position: relative; /* 必须，为了右键定位 */
 }
 
 @keyframes fadeIn {
@@ -354,8 +342,8 @@ const recordBtn = document.getElementById("recordBtn");
 const systemToast = document.getElementById("systemToast");
 
 /* ===== 录音限制 ===== */
-const MIN_DURATION = 0.5;   // 最短 0.5 秒
-const MAX_DURATION = 30;    // 最长 30 秒
+const MIN_DURATION = 0.5;
+const MAX_DURATION = 30;
 
 let mediaRecorder;
 let audioChunks = [];
@@ -370,10 +358,13 @@ function showSystemToast(msg) {
     systemToast.style.animation = "toastInOut 3s ease forwards";
 }
 
-/* ===== 渲染消息 ===== */
+/* ===== 渲染消息（核心改动：加入 data-text 和 contextmenu）===== */
 function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audioUrl = null) {
     const msg = document.createElement("div");
     msg.className = `message ${isSelf ? "self" : "other"}`;
+
+    // ✅ 保存原始文本，用于撤回
+    msg.dataset.text = text;
 
     const avatar = document.createElement("span");
     avatar.className = "avatar";
@@ -406,10 +397,7 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
             timer = setTimeout(() => content.classList.remove("show-wave"), 2000);
         });
         content.addEventListener("mouseup", () => clearTimeout(timer));
-        content.addEventListener("mouseleave", () => {
-            clearTimeout(timer);
-            content.classList.remove("show-wave");
-        });
+        content.addEventListener("mouseleave", () => clearTimeout(timer));
     } else {
         content = document.createTextNode(text);
     }
@@ -417,6 +405,24 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
     msg.appendChild(avatar);
     msg.appendChild(nick);
     msg.appendChild(content);
+
+    // ✅ 只有自己的消息才能右键撤回
+    if (isSelf && !isVoice) {
+        msg.addEventListener("contextmenu", (e) => {
+            e.preventDefault(); // 阻止浏览器默认菜单
+            const originalText = msg.dataset.text;
+
+            // 1. 把文字放回输入框
+            textInput.value = originalText;
+            textInput.focus();
+
+            // 2. 删除这条消息
+            msg.remove();
+
+            // 3. 提示
+            showSystemToast("已撤回，快改吧 😂");
+        });
+    }
 
     chatBox.appendChild(msg);
     chatBox.scrollTop = chatBox.scrollHeight;
@@ -476,7 +482,6 @@ recordBtn.onmousedown = async () => {
         mediaRecorder.start();
         recordBtn.classList.add("recording");
 
-        // ⏱ 30 秒强制停止
         maxDurationTimer = setTimeout(() => {
             mediaRecorder.stop();
             recordBtn.classList.remove("recording");
@@ -490,19 +495,16 @@ recordBtn.onmousedown = async () => {
 
 recordBtn.onmouseup = () => {
     if (!mediaRecorder || mediaRecorder.state === "inactive") return;
-
     clearTimeout(maxDurationTimer);
     mediaRecorder.stop();
     recordBtn.classList.remove("recording");
 
     mediaRecorder.addEventListener("stop", () => {
         const duration = (Date.now() - recordStartTime) / 1000;
-
         if (duration < MIN_DURATION) {
             showSystemToast("录音时间太短啦～");
             return;
         }
-
         const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
         const audioUrl = URL.createObjectURL(audioBlob);
         renderMessage("", true, currentUser, true, duration, audioUrl);
