@@ -316,10 +316,11 @@ const sendBtn = document.getElementById("sendBtn");
 const recordBtn = document.getElementById("recordBtn");
 const systemToast = document.getElementById("systemToast");
 
-/* ===== 录音计时 ===== */
+/* ===== 录音 ===== */
 let mediaRecorder;
 let audioChunks = [];
 let recordStartTime = 0;
+let currentAudioUrl = null;
 
 /* ===== 系统提示 ===== */
 function showSystemToast(msg) {
@@ -330,7 +331,7 @@ function showSystemToast(msg) {
 }
 
 /* ===== 渲染消息 ===== */
-function renderMessage(text, isSelf, sender, isVoice = false, duration = 0) {
+function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audioUrl = null) {
     const msg = document.createElement("div");
     msg.className = `message ${isSelf ? "self" : "other"}`;
 
@@ -343,7 +344,7 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0) {
     nick.textContent = sender.nickname;
 
     let content;
-    if (isVoice) {
+    if (isVoice && audioUrl) {
         content = document.createElement("div");
         content.className = "voice-bubble";
         content.innerHTML = `
@@ -356,6 +357,11 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0) {
                 <div class="wave-bar"></div>
             </div>
         `;
+
+        content.addEventListener("click", () => {
+            const audio = new Audio(audioUrl);
+            audio.play();
+        });
 
         let timer;
         content.addEventListener("mousedown", () => {
@@ -374,7 +380,6 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0) {
     msg.appendChild(avatar);
     msg.appendChild(nick);
     msg.appendChild(content);
-
     chatBox.appendChild(msg);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -421,7 +426,7 @@ function sendText() {
 sendBtn.onclick = sendText;
 textInput.addEventListener("keydown", e => e.key === "Enter" && sendText());
 
-/* ===== 录音（真实时长）===== */
+/* ===== 录音（真实音频 + 时长）===== */
 recordBtn.onmousedown = async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -444,10 +449,11 @@ recordBtn.onmouseup = () => {
     recordBtn.classList.remove("recording");
     recordBtn.textContent = "🎤";
 
-    const duration = (Date.now() - recordStartTime) / 1000;
-
-    mediaRecorder.addEventListener("dataavailable", () => {
-        renderMessage("", true, currentUser, true, duration);
+    mediaRecorder.addEventListener("stop", () => {
+        const duration = (Date.now() - recordStartTime) / 1000;
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        renderMessage("", true, currentUser, true, duration, audioUrl);
     }, { once: true });
 };
 </script>
