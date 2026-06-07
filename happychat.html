@@ -39,11 +39,36 @@ body {
     position: relative;
 }
 
-/* ===== 积分显示 ===== */
-.points-bar {
+/* ===== 右上角积分 + 签到 ===== */
+.top-bar {
     position: absolute;
     top: 12px;
     right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 20;
+}
+
+#signBtn {
+    background: linear-gradient(135deg, #34c759, #30d158);
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+#signBtn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+}
+
+.points-bar {
     background: linear-gradient(135deg, #ffd700, #ffb300);
     color: #fff;
     font-weight: 700;
@@ -51,7 +76,6 @@ body {
     padding: 6px 14px;
     border-radius: 20px;
     box-shadow: 0 4px 12px rgba(255, 183, 0, 0.3);
-    z-index: 20;
     user-select: none;
 }
 
@@ -356,18 +380,27 @@ body {
 
 /* ===== 移动端 ===== */
 @media (max-width: 768px) {
+    .top-bar {
+        top: 10px;
+        right: 12px;
+        gap: 8px;
+    }
+
+    #signBtn {
+        font-size: 12px;
+        padding: 5px 12px;
+    }
+
+    .points-bar {
+        font-size: 13px;
+        padding: 5px 12px;
+    }
+
     .chat-container {
         width: 100vw;
         height: 100vh;
         max-height: none;
         border-radius: 0;
-    }
-
-    .points-bar {
-        top: 10px;
-        right: 12px;
-        font-size: 13px;
-        padding: 5px 12px;
     }
 
     .message {
@@ -396,7 +429,13 @@ body {
 <body>
 
 <div class="chat-container">
-    <div class="points-bar" id="pointsBar">💰 10</div>
+
+    <!-- 右上角 -->
+    <div class="top-bar">
+        <button id="signBtn">📅 签到</button>
+        <div class="points-bar" id="pointsBar">💰 10</div>
+    </div>
+
     <div class="header">💬 我的专属聊天室</div>
 
     <div class="chat-box" id="chatBox">
@@ -445,6 +484,14 @@ const bots = [
     { uid: "bot3", nickname: "王五", avatar: "王", texts: ["今天也要开心哦 🌈", "记得多喝水～", "分享点好玩的呗"] }
 ];
 
+/* ===== DOM ===== */
+const chatBox = document.getElementById("chatBox");
+const textInput = document.getElementById("textInput");
+const sendBtn = document.getElementById("sendBtn");
+const recordBtn = document.getElementById("recordBtn");
+const systemToast = document.getElementById("systemToast");
+const signBtn = document.getElementById("signBtn");
+
 /* ===== 积分系统 ===== */
 let points = parseInt(localStorage.getItem("points")) || 10;
 const today = new Date().toDateString();
@@ -462,16 +509,28 @@ function updatePoints() {
     localStorage.setItem("points", points);
 }
 
-/* ===== DOM ===== */
-const chatBox = document.getElementById("chatBox");
-const textInput = document.getElementById("textInput");
-const sendBtn = document.getElementById("sendBtn");
-const recordBtn = document.getElementById("recordBtn");
-const systemToast = document.getElementById("systemToast");
+/* ===== 签到系统 ===== */
+const lastSignDate = localStorage.getItem("lastSignDate");
 
-/* ===== 防刷重复消息 ===== */
-let messageHistory = [];
-let messageCount = 0;
+function checkSignStatus() {
+    if (lastSignDate === today) {
+        signBtn.disabled = true;
+        signBtn.textContent = "✅ 已签到";
+    } else {
+        signBtn.disabled = false;
+        signBtn.textContent = "📅 签到";
+    }
+}
+
+signBtn.onclick = () => {
+    if (lastSignDate === today) return;
+
+    points += 10;
+    localStorage.setItem("lastSignDate", today);
+    updatePoints();
+    checkSignStatus();
+    showSystemToast("📅 签到成功 +10 积分");
+};
 
 /* ===== 确认弹窗 ===== */
 const confirmModal = document.getElementById("confirmModal");
@@ -589,9 +648,14 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* ===== 机器人问候（只说一次）===== */
+/* ===== 防刷重复消息 ===== */
+let messageHistory = [];
+let messageCount = 0;
+
+/* ===== 机器人问候 ===== */
 window.onload = () => {
     updatePoints();
+    checkSignStatus();
     showSystemToast("✅ 聊天室已连接");
 
     bots.forEach((bot, i) => {
@@ -607,7 +671,6 @@ function sendText() {
     const text = textInput.value.trim();
     if (!text) return;
 
-    // ✅ 防刷检测
     messageHistory.push(text);
     if (messageHistory.length > 3) messageHistory.shift();
 
