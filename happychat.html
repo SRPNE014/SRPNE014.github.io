@@ -162,7 +162,7 @@ body {
     opacity: 0.8;
 }
 
-/* ===== 声波图（播放用）===== */
+/* ===== 声波图 ===== */
 .waveform {
     display: none;
     align-items: flex-end;
@@ -242,7 +242,6 @@ body {
     animation: pulse 1s infinite;
 }
 
-/* ===== 录音时按钮内波形 ===== */
 .record-wave {
     display: none;
     position: absolute;
@@ -354,10 +353,14 @@ const sendBtn = document.getElementById("sendBtn");
 const recordBtn = document.getElementById("recordBtn");
 const systemToast = document.getElementById("systemToast");
 
-/* ===== 录音 ===== */
+/* ===== 录音限制 ===== */
+const MIN_DURATION = 0.5;   // 最短 0.5 秒
+const MAX_DURATION = 30;    // 最长 30 秒
+
 let mediaRecorder;
 let audioChunks = [];
 let recordStartTime = 0;
+let maxDurationTimer = null;
 
 /* ===== 系统提示 ===== */
 function showSystemToast(msg) {
@@ -461,7 +464,7 @@ function sendText() {
 sendBtn.onclick = sendText;
 textInput.addEventListener("keydown", e => e.key === "Enter" && sendText());
 
-/* ===== 录音（含按钮波形）===== */
+/* ===== 录音逻辑（含时长限制）===== */
 recordBtn.onmousedown = async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -471,20 +474,35 @@ recordBtn.onmousedown = async () => {
 
         mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
         mediaRecorder.start();
-
         recordBtn.classList.add("recording");
+
+        // ⏱ 30 秒强制停止
+        maxDurationTimer = setTimeout(() => {
+            mediaRecorder.stop();
+            recordBtn.classList.remove("recording");
+            showSystemToast("最长只能录 30 秒哦～");
+        }, MAX_DURATION * 1000);
+
     } catch {
-        alert("麦克风权限被拒绝 😢");
+        showSystemToast("麦克风权限被拒绝 😢");
     }
 };
 
 recordBtn.onmouseup = () => {
-    if (!mediaRecorder) return;
+    if (!mediaRecorder || mediaRecorder.state === "inactive") return;
+
+    clearTimeout(maxDurationTimer);
     mediaRecorder.stop();
     recordBtn.classList.remove("recording");
 
     mediaRecorder.addEventListener("stop", () => {
         const duration = (Date.now() - recordStartTime) / 1000;
+
+        if (duration < MIN_DURATION) {
+            showSystemToast("录音时间太短啦～");
+            return;
+        }
+
         const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
         const audioUrl = URL.createObjectURL(audioBlob);
         renderMessage("", true, currentUser, true, duration, audioUrl);
