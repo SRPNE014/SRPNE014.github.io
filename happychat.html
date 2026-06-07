@@ -6,11 +6,11 @@
 <title>我的专属聊天室</title>
 
 <style>
-/* ===== iOS 26 风格：纯白 + 毛玻璃 ===== */
+/* ===== iOS 26 纯白风 ===== */
 body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
                  "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background: #ffffff;          /* ✅ 纯白 */
+    background: #ffffff;
     margin: 0;
     padding: 0;
     height: 100vh;
@@ -21,13 +21,12 @@ body {
     align-items: center;
 }
 
-/* ===== 聊天容器 ===== */
 .chat-container {
     width: 95vw;
     max-width: 900px;
     height: 90vh;
     max-height: 700px;
-    background: rgba(245, 245, 247, 0.85); /* iOS 灰白 */
+    background: rgba(245, 245, 247, 0.85);
     border-radius: 22px;
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -51,7 +50,7 @@ body {
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
 }
 
-/* ===== 消息区域 ===== */
+/* ===== 消息区 ===== */
 .chat-box {
     flex: 1;
     overflow-y: auto;
@@ -115,14 +114,14 @@ body {
 }
 
 .message.self {
-    background: #007AFF;   /* iOS 蓝 */
+    background: #007AFF;
     color: #fff;
     align-self: flex-end;
     border-bottom-right-radius: 4px;
 }
 
 .message.other {
-    background: #e9e9eb;   /* iOS 灰 */
+    background: #e9e9eb;
     color: #000;
     align-self: flex-start;
     border-bottom-left-radius: 4px;
@@ -151,6 +150,44 @@ body {
     opacity: 0.8;
 }
 
+/* ===== 语音气泡 ===== */
+.voice-bubble {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+/* ===== 声波图（长按显示）===== */
+.waveform {
+    display: none;
+    align-items: flex-end;
+    gap: 3px;
+    height: 20px;
+    margin-left: 6px;
+}
+
+.voice-bubble.show-wave .waveform {
+    display: flex;
+}
+
+.wave-bar {
+    width: 4px;
+    background: currentColor;
+    border-radius: 2px;
+    animation: wave 1.2s infinite ease-in-out;
+}
+
+.wave-bar:nth-child(2) { animation-delay: .2s; height: 14px; }
+.wave-bar:nth-child(3) { animation-delay: .4s; height: 20px; }
+.wave-bar:nth-child(4) { animation-delay: .6s; height: 14px; }
+
+@keyframes wave {
+    0%, 100% { transform: scaleY(0.6); }
+    50% { transform: scaleY(1); }
+}
+
 /* ===== 输入栏 ===== */
 .input-bar {
     padding: 12px 16px;
@@ -169,10 +206,6 @@ body {
     background: #f2f2f7;
     font-size: 15px;
     outline: none;
-}
-
-#textInput:focus {
-    background: #eaeaef;
 }
 
 #sendBtn {
@@ -200,16 +233,6 @@ body {
     justify-content: center;
 }
 
-.record-btn.recording {
-    animation: pulse 1s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-    100% { transform: scale(1); }
-}
-
 /* ===== 移动端 ===== */
 @media (max-width: 768px) {
     .chat-container {
@@ -219,11 +242,6 @@ body {
         border-radius: 0;
     }
 
-    .header {
-        padding: 14px 16px;
-        font-size: 16px;
-    }
-
     .message {
         max-width: 82%;
         font-size: 14px;
@@ -231,12 +249,11 @@ body {
 
     #textInput {
         font-size: 14px;
-        padding: 9px 12px;
     }
 
     #sendBtn {
-        padding: 9px 16px;
         font-size: 14px;
+        padding: 9px 16px;
     }
 
     .record-btn {
@@ -295,7 +312,7 @@ function showSystemToast(msg) {
 }
 
 /* ===== 渲染消息 ===== */
-function renderMessage(text, isSelf, sender) {
+function renderMessage(text, isSelf, sender, isVoice = false) {
     const msg = document.createElement("div");
     msg.className = `message ${isSelf ? "self" : "other"}`;
 
@@ -307,11 +324,40 @@ function renderMessage(text, isSelf, sender) {
     nick.className = "nickname";
     nick.textContent = sender.nickname;
 
-    const textNode = document.createTextNode(text);
+    let content;
+    if (isVoice) {
+        content = document.createElement("div");
+        content.className = "voice-bubble";
+        content.innerHTML = `
+            🎵 语音消息
+            <div class="waveform">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+        `;
+
+        let timer;
+        content.addEventListener("mousedown", () => {
+            content.classList.add("show-wave");
+            timer = setTimeout(() => {
+                content.classList.remove("show-wave");
+            }, 2000);
+        });
+        content.addEventListener("mouseup", () => clearTimeout(timer));
+        content.addEventListener("mouseleave", () => {
+            clearTimeout(timer);
+            content.classList.remove("show-wave");
+        });
+    } else {
+        content = document.createTextNode(text);
+    }
 
     msg.appendChild(avatar);
     msg.appendChild(nick);
-    msg.appendChild(textNode);
+    msg.appendChild(content);
+
     chatBox.appendChild(msg);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -330,18 +376,18 @@ window.onload = () => {
     startBotRandomReply();
 };
 
-/* ===== 随机回复 ===== */
+/* ===== 机器人插嘴（≈30 秒）===== */
 let botTimer = setInterval(() => {
     const bot = bots[Math.floor(Math.random() * bots.length)];
     const text = bot.texts[Math.floor(Math.random() * bot.texts.length)];
     setTimeout(() => {
         renderMessage(text, false, bot);
     }, Math.random() * 2000);
-}, 15000 + Math.random() * 15000);
+}, 30000); // ✅ 30 秒
 
 function startBotRandomReply() {}
 
-/* ===== 发送 ===== */
+/* ===== 发送文本 ===== */
 function sendText() {
     const text = textInput.value.trim();
     if (!text) return;
@@ -369,7 +415,7 @@ recordBtn.onmouseup = () => {
     recording = false;
     recordBtn.classList.remove("recording");
     recordBtn.textContent = "🎤";
-    renderMessage("这是一段语音消息 🎙️", true, currentUser);
+    renderMessage("", true, currentUser, true);
 };
 </script>
 
