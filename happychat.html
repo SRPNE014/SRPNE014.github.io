@@ -656,32 +656,37 @@ if (lastLogin !== today) {
     localStorage.setItem("lastLogin", today);
     showSystemToast("🎉 每日登录 +10 积分");
 }
+
 localStorage.setItem("points", points);
-
-function updatePoints() {
-    document.getElementById("pointsBar").textContent = "💰 " + points;
-    localStorage.setItem("points", points);
-}
-
-/* ===== 签到 ===== */
-const lastSignDate = localStorage.getItem("lastSignDate");
+/* ===== 签到系统（防刷加强版）===== */
+const SIGN_KEY = "lastSignDate";
 
 function checkSignStatus() {
-    if (lastSignDate === today) {
+    const lastSign = localStorage.getItem(SIGN_KEY);
+    if (lastSign === today) {
         signBtn.disabled = true;
         signBtn.textContent = "✅ 已签到";
+        return true;
     } else {
         signBtn.disabled = false;
         signBtn.textContent = "📅 签到";
+        return false;
     }
 }
 
 signBtn.onclick = () => {
-    if (lastSignDate === today) return;
+    // ✅ 双重保险
+    if (signBtn.disabled) return;
+    if (checkSignStatus()) return;
+
     points += 10;
-    localStorage.setItem("lastSignDate", today);
+    localStorage.setItem(SIGN_KEY, today);
     updatePoints();
-    checkSignStatus();
+
+    // ✅ 立刻锁死按钮
+    signBtn.disabled = true;
+    signBtn.textContent = "✅ 已签到";
+
     showSystemToast("📅 签到成功 +10 积分");
 };
 
