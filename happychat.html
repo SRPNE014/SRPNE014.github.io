@@ -162,7 +162,7 @@ body {
     opacity: 0.8;
 }
 
-/* ===== 声波图 ===== */
+/* ===== 声波图（播放用）===== */
 .waveform {
     display: none;
     align-items: flex-end;
@@ -222,6 +222,7 @@ body {
     cursor: pointer;
 }
 
+/* ===== 录音按钮 ===== */
 .record-btn {
     width: 40px;
     height: 40px;
@@ -234,11 +235,41 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
 }
 
 .record-btn.recording {
     animation: pulse 1s infinite;
 }
+
+/* ===== 录音时按钮内波形 ===== */
+.record-wave {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+.record-btn.recording .record-wave {
+    display: flex;
+}
+
+.record-btn.recording span {
+    display: none;
+}
+
+.record-wave .bar {
+    width: 4px;
+    height: 14px;
+    background: #fff;
+    border-radius: 2px;
+    animation: wave 1s infinite ease-in-out;
+}
+
+.record-wave .bar:nth-child(2) { animation-delay: .2s; height: 20px; }
+.record-wave .bar:nth-child(3) { animation-delay: .4s; height: 14px; }
 
 @keyframes pulse {
     0% { transform: scale(1); }
@@ -288,7 +319,14 @@ body {
     </div>
 
     <div class="input-bar">
-        <button class="record-btn" id="recordBtn">🎤</button>
+        <button class="record-btn" id="recordBtn">
+            <span>🎤</span>
+            <div class="record-wave">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </button>
         <input type="text" id="textInput" placeholder="iMessage">
         <button id="sendBtn">发送</button>
     </div>
@@ -320,7 +358,6 @@ const systemToast = document.getElementById("systemToast");
 let mediaRecorder;
 let audioChunks = [];
 let recordStartTime = 0;
-let currentAudioUrl = null;
 
 /* ===== 系统提示 ===== */
 function showSystemToast(msg) {
@@ -358,10 +395,7 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
             </div>
         `;
 
-        content.addEventListener("click", () => {
-            const audio = new Audio(audioUrl);
-            audio.play();
-        });
+        content.addEventListener("click", () => new Audio(audioUrl).play());
 
         let timer;
         content.addEventListener("mousedown", () => {
@@ -380,6 +414,7 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
     msg.appendChild(avatar);
     msg.appendChild(nick);
     msg.appendChild(content);
+
     chatBox.appendChild(msg);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
@@ -426,7 +461,7 @@ function sendText() {
 sendBtn.onclick = sendText;
 textInput.addEventListener("keydown", e => e.key === "Enter" && sendText());
 
-/* ===== 录音（真实音频 + 时长）===== */
+/* ===== 录音（含按钮波形）===== */
 recordBtn.onmousedown = async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -436,8 +471,8 @@ recordBtn.onmousedown = async () => {
 
         mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
         mediaRecorder.start();
+
         recordBtn.classList.add("recording");
-        recordBtn.textContent = "🔴";
     } catch {
         alert("麦克风权限被拒绝 😢");
     }
@@ -447,7 +482,6 @@ recordBtn.onmouseup = () => {
     if (!mediaRecorder) return;
     mediaRecorder.stop();
     recordBtn.classList.remove("recording");
-    recordBtn.textContent = "🎤";
 
     mediaRecorder.addEventListener("stop", () => {
         const duration = (Date.now() - recordStartTime) / 1000;
