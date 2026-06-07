@@ -6,7 +6,7 @@
 <title>我是谁</title>
 
 <style>
-/* ===== 背景：星空 + 星轨 + 彩虹 ===== */
+/* ===== 背景（你原有，一字未改）===== */
 body {
     background: #0b0f1a;
     position: relative;
@@ -72,7 +72,41 @@ body::after {
     100% { transform: rotate(360deg); }
 }
 
-/* ===== 你原来的样式（一字未改）===== */
+/* ===== 流星 ===== */
+.meteor {
+    position: fixed;
+    top: -100px;
+    left: -100px;
+    width: 2px;
+    height: 80px;
+    background: linear-gradient(180deg, #fff, transparent);
+    opacity: 0;
+    transform: rotate(45deg);
+    animation: meteorFall 7s ease-in infinite;
+    z-index: 0;
+}
+
+.meteor:nth-child(3) {
+    top: -120px;
+    left: 60%;
+    animation-delay: 5s;
+}
+
+@keyframes meteorFall {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(45deg);
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(700px, 700px) rotate(45deg);
+    }
+}
+
+/* ===== 你原来的卡片样式（一字未改）===== */
 .intro-card {
     background-color: #ffffff;
     border-radius: 12px;
@@ -83,7 +117,6 @@ body::after {
     padding: 30px 20px;
     position: relative;
     z-index: 1;
-
     margin: auto;
 }
 
@@ -119,7 +152,12 @@ p {
 </head>
 
 <body>
+
 <div class="rainbow-bg"></div>
+
+<!-- 流星 -->
+<div class="meteor"></div>
+<div class="meteor"></div>
 
 <div class="intro-card">
     <h1>我是谁</h1>
