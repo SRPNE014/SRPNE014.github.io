@@ -563,6 +563,64 @@ body {
         padding: 16px 28px;
     }
 }
+    /* ===== + 号按钮 ===== */
+.plus-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #e4e4eb;
+    font-size: 22px;
+    font-weight: 600;
+    color: #007AFF;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ===== 表情面板 ===== */
+.emoji-panel {
+    position: absolute;
+    bottom: 70px;
+    left: 16px;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 10px;
+    display: none;
+    gap: 10px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 30;
+}
+
+.emoji-panel.active {
+    display: flex;
+}
+
+.emoji-panel span {
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.emoji-panel span:hover {
+    background: rgba(0,122,255,0.15);
+}
+
+/* 移动端 */
+@media (max-width: 768px) {
+    .emoji-panel {
+        bottom: 64px;
+        left: 8px;
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .emoji-panel span {
+        font-size: 20px;
+    }
+}
 </style>
 </head>
 
