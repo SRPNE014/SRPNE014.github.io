@@ -39,6 +39,23 @@ body {
     position: relative;
 }
 
+/* ===== 积分显示 ===== */
+.points-bar {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    background: linear-gradient(135deg, #ffd700, #ffb300);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(255, 183, 0, 0.3);
+    z-index: 20;
+    user-select: none;
+}
+
+/* ===== 标题栏 ===== */
 .header {
     padding: 16px 20px;
     text-align: center;
@@ -186,10 +203,9 @@ body {
     border-top: 0.5px solid rgba(0, 0, 0, 0.08);
     display: flex;
     gap: 10px;
-    align-items: flex-end; /* ✅ 底部对齐 */
+    align-items: flex-end;
 }
 
-/* ✅ 可换行、自动增高输入框 */
 #textInput {
     flex: 1;
     padding: 10px 14px;
@@ -199,11 +215,11 @@ body {
     font-size: 15px;
     line-height: 1.4;
     outline: none;
-    resize: none;          /* 禁止拖拽 */
-    overflow-y: auto;       /* 超过高度出滚动条 */
-    min-height: 40px;       /* 初始高度 */
-    max-height: calc(1.4em * 5); /* 最多 5 行 */
-    field-sizing: content;   /* ✅ 现代浏览器自动撑开 */
+    resize: none;
+    overflow-y: auto;
+    min-height: 40px;
+    max-height: calc(1.4em * 5);
+    field-sizing: content;
 }
 
 #sendBtn {
@@ -215,7 +231,7 @@ body {
     font-weight: 600;
     font-size: 15px;
     cursor: pointer;
-    height: 40px; /* ✅ 与输入框初始高度对齐 */
+    height: 40px;
 }
 
 /* ===== 录音按钮 ===== */
@@ -347,6 +363,13 @@ body {
         border-radius: 0;
     }
 
+    .points-bar {
+        top: 10px;
+        right: 12px;
+        font-size: 13px;
+        padding: 5px 12px;
+    }
+
     .message {
         max-width: 82%;
         font-size: 14px;
@@ -373,6 +396,7 @@ body {
 <body>
 
 <div class="chat-container">
+    <div class="points-bar" id="pointsBar">💰 10</div>
     <div class="header">💬 我的专属聊天室</div>
 
     <div class="chat-box" id="chatBox">
@@ -421,12 +445,33 @@ const bots = [
     { uid: "bot3", nickname: "王五", avatar: "王", texts: ["今天也要开心哦 🌈", "记得多喝水～", "分享点好玩的呗"] }
 ];
 
+/* ===== 积分系统 ===== */
+let points = parseInt(localStorage.getItem("points")) || 10;
+const today = new Date().toDateString();
+const lastLogin = localStorage.getItem("lastLogin");
+
+if (lastLogin !== today) {
+    points += 10;
+    localStorage.setItem("lastLogin", today);
+    showSystemToast("🎉 每日登录 +10 积分");
+}
+localStorage.setItem("points", points);
+
+function updatePoints() {
+    document.getElementById("pointsBar").textContent = "💰 " + points;
+    localStorage.setItem("points", points);
+}
+
 /* ===== DOM ===== */
 const chatBox = document.getElementById("chatBox");
 const textInput = document.getElementById("textInput");
 const sendBtn = document.getElementById("sendBtn");
 const recordBtn = document.getElementById("recordBtn");
 const systemToast = document.getElementById("systemToast");
+
+/* ===== 防刷重复消息 ===== */
+let messageHistory = [];
+let messageCount = 0;
 
 /* ===== 确认弹窗 ===== */
 const confirmModal = document.getElementById("confirmModal");
@@ -546,6 +591,7 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
 
 /* ===== 机器人问候（只说一次）===== */
 window.onload = () => {
+    updatePoints();
     showSystemToast("✅ 聊天室已连接");
 
     bots.forEach((bot, i) => {
@@ -560,18 +606,40 @@ window.onload = () => {
 function sendText() {
     const text = textInput.value.trim();
     if (!text) return;
+
+    // ✅ 防刷检测
+    messageHistory.push(text);
+    if (messageHistory.length > 3) messageHistory.shift();
+
+    const isSpam = messageHistory.length === 3 &&
+        messageHistory[0] === messageHistory[1] &&
+        messageHistory[1] === messageHistory[2];
+
+    if (isSpam) {
+        showSystemToast("🚫 别刷屏啦，积分没了～");
+        textInput.value = "";
+        textInput.style.height = "auto";
+        return;
+    }
+
     renderMessage(text, true, currentUser);
     textInput.value = "";
-    textInput.style.height = "auto"; // ✅ 重置高度
+    textInput.style.height = "auto";
+
+    messageCount++;
+    if (messageCount % 2 === 0) {
+        points += 1;
+        updatePoints();
+        showSystemToast("💰 发消息 +1 积分");
+    }
 }
 
-/* ✅ 键盘快捷键：Enter 换行，Ctrl+Enter 发送 */
+/* ✅ 键盘快捷键 */
 textInput.addEventListener("keydown", e => {
     if (e.key === "Enter" && e.ctrlKey) {
         e.preventDefault();
         sendText();
     }
-    // Enter 单独使用：默认换行（textarea 原生行为）
 });
 
 sendBtn.onclick = sendText;
