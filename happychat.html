@@ -39,7 +39,7 @@ body {
     position: relative;
 }
 
-/* ===== 右上角积分 + 签到 ===== */
+/* ===== 右上角 ===== */
 .top-bar {
     position: absolute;
     top: 12px;
@@ -48,6 +48,21 @@ body {
     align-items: center;
     gap: 12px;
     z-index: 20;
+}
+
+#shopBtn {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#shopBtn:hover {
+    opacity: 0.85;
 }
 
 #signBtn {
@@ -79,7 +94,7 @@ body {
     user-select: none;
 }
 
-/* ===== 标题栏 ===== */
+/* ===== 标题 ===== */
 .header {
     padding: 16px 20px;
     text-align: center;
@@ -378,6 +393,126 @@ body {
     color: #fff;
 }
 
+/* ===== 积分商城 ===== */
+.shop-modal {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.shop-modal.active {
+    display: flex;
+}
+
+/* 星轨 */
+.shop-stars {
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 10% 20%, #fff 1%, transparent 1%),
+        radial-gradient(1px 1px at 40% 70%, #fff 1%, transparent 1%);
+    z-index: 0;
+}
+
+.shop-stars::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255,255,255,0.06) 30deg,
+        transparent 60deg,
+        transparent 180deg,
+        rgba(255,255,255,0.06) 210deg,
+        transparent 240deg,
+        transparent 360deg
+    );
+    animation: shopStarTrail 40s linear infinite;
+}
+
+@keyframes shopStarTrail {
+    100% { transform: rotate(360deg); }
+}
+
+/* 流星 */
+.shop-meteor {
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    width: 2px;
+    height: 90px;
+    background: linear-gradient(180deg, #fff, transparent);
+    transform: rotate(135deg);
+    transform-origin: center;
+    opacity: 0;
+    animation: shopMeteor 6s ease-in infinite;
+    z-index: 1;
+}
+
+.shop-meteor:nth-child(2) {
+    top: -120px;
+    left: 50%;
+    animation-delay: 3s;
+}
+
+@keyframes shopMeteor {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(135deg);
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(600px, 600px) rotate(135deg);
+    }
+}
+
+/* 标题 */
+.shop-title {
+    font-size: 48px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow:
+        0 0 12px rgba(255,255,255,0.6),
+        0 0 24px rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.08);
+    padding: 20px 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 2;
+    letter-spacing: 4px;
+}
+
+/* 关闭按钮 */
+.shop-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.shop-close:hover {
+    background: rgba(255,255,255,0.2);
+}
+
 /* ===== 移动端 ===== */
 @media (max-width: 768px) {
     .top-bar {
@@ -386,7 +521,7 @@ body {
         gap: 8px;
     }
 
-    #signBtn {
+    #signBtn, #shopBtn {
         font-size: 12px;
         padding: 5px 12px;
     }
@@ -422,6 +557,11 @@ body {
         height: 36px;
         font-size: 16px;
     }
+
+    .shop-title {
+        font-size: 32px;
+        padding: 16px 28px;
+    }
 }
 </style>
 </head>
@@ -429,9 +569,9 @@ body {
 <body>
 
 <div class="chat-container">
-
     <!-- 右上角 -->
     <div class="top-bar">
+        <button id="shopBtn">🛒 积分商城</button>
         <button id="signBtn">📅 签到</button>
         <div class="points-bar" id="pointsBar">💰 10</div>
     </div>
@@ -458,7 +598,18 @@ body {
     </div>
 </div>
 
-<!-- 撤回确认弹窗 -->
+<!-- 积分商城 -->
+<div class="shop-modal" id="shopModal">
+    <div class="shop-stars"></div>
+    <div class="shop-meteor"></div>
+    <div class="shop-meteor"></div>
+
+    <div class="shop-title">积 分 商 城</div>
+
+    <button class="shop-close" id="closeShop">✕</button>
+</div>
+
+<!-- 撤回确认 -->
 <div class="confirm-modal" id="confirmModal">
     <div class="confirm-box">
         <p id="confirmText">确定要撤回吗？</p>
@@ -491,6 +642,9 @@ const sendBtn = document.getElementById("sendBtn");
 const recordBtn = document.getElementById("recordBtn");
 const systemToast = document.getElementById("systemToast");
 const signBtn = document.getElementById("signBtn");
+const shopBtn = document.getElementById("shopBtn");
+const shopModal = document.getElementById("shopModal");
+const closeShop = document.getElementById("closeShop");
 
 /* ===== 积分系统 ===== */
 let points = parseInt(localStorage.getItem("points")) || 10;
@@ -509,7 +663,7 @@ function updatePoints() {
     localStorage.setItem("points", points);
 }
 
-/* ===== 签到系统 ===== */
+/* ===== 签到 ===== */
 const lastSignDate = localStorage.getItem("lastSignDate");
 
 function checkSignStatus() {
@@ -524,7 +678,6 @@ function checkSignStatus() {
 
 signBtn.onclick = () => {
     if (lastSignDate === today) return;
-
     points += 10;
     localStorage.setItem("lastSignDate", today);
     updatePoints();
@@ -532,12 +685,15 @@ signBtn.onclick = () => {
     showSystemToast("📅 签到成功 +10 积分");
 };
 
+/* ===== 商城 ===== */
+shopBtn.onclick = () => shopModal.classList.add("active");
+closeShop.onclick = () => shopModal.classList.remove("active");
+
 /* ===== 确认弹窗 ===== */
 const confirmModal = document.getElementById("confirmModal");
 const confirmText = document.getElementById("confirmText");
 const cancelBtn = document.getElementById("cancelBtn");
 const confirmBtn = document.getElementById("confirmBtn");
-
 let pendingAction = null;
 
 function showConfirm(text, action) {
@@ -648,7 +804,7 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* ===== 防刷重复消息 ===== */
+/* ===== 防刷 ===== */
 let messageHistory = [];
 let messageCount = 0;
 
@@ -697,7 +853,7 @@ function sendText() {
     }
 }
 
-/* ✅ 键盘快捷键 */
+/* ===== 快捷键 ===== */
 textInput.addEventListener("keydown", e => {
     if (e.key === "Enter" && e.ctrlKey) {
         e.preventDefault();
@@ -707,7 +863,7 @@ textInput.addEventListener("keydown", e => {
 
 sendBtn.onclick = sendText;
 
-/* ===== 录音逻辑 ===== */
+/* ===== 录音 ===== */
 recordBtn.onmousedown = async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
