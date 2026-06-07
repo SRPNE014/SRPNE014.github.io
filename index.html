@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background-color: #f5f7fa;
+            background: #0b0f1a;
             margin: 0;
             padding: 0;
             display: flex;
@@ -18,9 +18,51 @@
             position: relative;
         }
 
-        /* ===== 彩虹背景动画（21s 与按钮同步）===== */
+        /* ===== 星星背景 ===== */
         body::before {
             content: "";
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(1px 1px at 10% 20%, #fff 1%, transparent 1%),
+                radial-gradient(1px 1px at 30% 60%, #fff 1%, transparent 1%),
+                radial-gradient(1px 1px at 70% 40%, #fff 1%, transparent 1%),
+                radial-gradient(1px 1px at 80% 80%, #fff 1%, transparent 1%),
+                radial-gradient(1px 1px at 50% 90%, #fff 1%, transparent 1%);
+            z-index: -3;
+        }
+
+        /* ===== 星轨 ===== */
+        body::after {
+            content: "";
+            position: absolute;
+            inset: -50%;
+            background: conic-gradient(
+                from 0deg,
+                transparent 0deg,
+                rgba(255,255,255,0.08) 30deg,
+                transparent 60deg,
+                transparent 180deg,
+                rgba(255,255,255,0.08) 210deg,
+                transparent 240deg,
+                transparent 360deg
+            );
+            animation: starTrail 40s linear infinite;
+            z-index: -2;
+            filter: blur(6px);
+        }
+
+        @keyframes starTrail {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== 彩虹光晕（叠加在星轨上）===== */
+        .rainbow-glow {
             position: absolute;
             inset: -50%;
             background: conic-gradient(
@@ -34,13 +76,13 @@
                 #8b00ff,
                 #ff0000
             );
-            animation: rainbowBG 21s linear infinite;
+            animation: rainbowSpin 21s linear infinite;
             z-index: -1;
             opacity: 0.25;
-            filter: blur(80px);
+            filter: blur(120px);
         }
 
-        @keyframes rainbowBG {
+        @keyframes rainbowSpin {
             0% {
                 transform: rotate(0deg);
             }
@@ -50,14 +92,14 @@
         }
 
         .profile-card {
-            background-color: #ffffff;
+            background-color: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(6px);
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
             max-width: 400px;
             width: 90%;
             text-align: center;
             padding: 30px 20px;
-            overflow: hidden;
             position: relative;
             z-index: 1;
         }
@@ -86,12 +128,12 @@
 
         h1 {
             margin: 0;
-            color: #333333;
+            color: #222;
             font-size: 28px;
         }
 
         p {
-            color: #666666;
+            color: #555;
             line-height: 1.6;
             margin-top: 15px;
             font-size: 16px;
@@ -104,7 +146,7 @@
         .contact {
             margin-top: 25px;
             font-size: 14px;
-            color: #999999;
+            color: #888;
         }
 
         @keyframes slideUpFadeIn {
@@ -118,10 +160,10 @@
             text-decoration: line-through;
         }
 
-        /* ===== 彩虹按钮动画 ===== */
+        /* ===== 彩虹按钮 ===== */
         .planet-button {
             display: inline-block;
-            margin-top: 20px;
+            margin: 10px 6px 0;
             padding: 12px 24px;
             color: #ffffff;
             font-size: 16px;
@@ -144,11 +186,15 @@
         }
 
         .planet-button:hover {
-            filter: brightness(1.05);
+            filter: brightness(1.08);
         }
     </style>
 </head>
 <body>
+
+    <!-- 彩虹光层 -->
+    <div class="rainbow-glow"></div>
+
     <div class="profile-card">
         <img src="无标题43_20260427125221.png" alt="头像" class="avatar">
         <h1>DFSRPNΔLXN14</h1>
@@ -166,5 +212,6 @@
         <a href="planet-intro.html" class="planet-button" target="_blank">什么是星球阁？</a>
         <a href="introduction.html" class="planet-button" target="_blank">我是谁？</a>
     </div>
+
 </body>
 </html>
