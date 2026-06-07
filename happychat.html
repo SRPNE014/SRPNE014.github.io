@@ -39,7 +39,6 @@ body {
     position: relative;
 }
 
-/* ===== 标题栏 ===== */
 .header {
     padding: 16px 20px;
     text-align: center;
@@ -50,7 +49,6 @@ body {
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
 }
 
-/* ===== 消息区 ===== */
 .chat-box {
     flex: 1;
     overflow-y: auto;
@@ -159,7 +157,12 @@ body {
     user-select: none;
 }
 
-/* ===== 声波图（长按显示）===== */
+.voice-duration {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* ===== 声波图 ===== */
 .waveform {
     display: none;
     align-items: flex-end;
@@ -233,6 +236,16 @@ body {
     justify-content: center;
 }
 
+.record-btn.recording {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
 /* ===== 移动端 ===== */
 @media (max-width: 768px) {
     .chat-container {
@@ -303,6 +316,11 @@ const sendBtn = document.getElementById("sendBtn");
 const recordBtn = document.getElementById("recordBtn");
 const systemToast = document.getElementById("systemToast");
 
+/* ===== 录音计时 ===== */
+let mediaRecorder;
+let audioChunks = [];
+let recordStartTime = 0;
+
 /* ===== 系统提示 ===== */
 function showSystemToast(msg) {
     systemToast.textContent = msg;
@@ -312,7 +330,7 @@ function showSystemToast(msg) {
 }
 
 /* ===== 渲染消息 ===== */
-function renderMessage(text, isSelf, sender, isVoice = false) {
+function renderMessage(text, isSelf, sender, isVoice = false, duration = 0) {
     const msg = document.createElement("div");
     msg.className = `message ${isSelf ? "self" : "other"}`;
 
@@ -329,7 +347,8 @@ function renderMessage(text, isSelf, sender, isVoice = false) {
         content = document.createElement("div");
         content.className = "voice-bubble";
         content.innerHTML = `
-            🎵 语音消息
+            🎵
+            <span class="voice-duration">${duration.toFixed(1)}″</span>
             <div class="waveform">
                 <div class="wave-bar"></div>
                 <div class="wave-bar"></div>
@@ -341,9 +360,7 @@ function renderMessage(text, isSelf, sender, isVoice = false) {
         let timer;
         content.addEventListener("mousedown", () => {
             content.classList.add("show-wave");
-            timer = setTimeout(() => {
-                content.classList.remove("show-wave");
-            }, 2000);
+            timer = setTimeout(() => content.classList.remove("show-wave"), 2000);
         });
         content.addEventListener("mouseup", () => clearTimeout(timer));
         content.addEventListener("mouseleave", () => {
@@ -383,7 +400,7 @@ let botTimer = setInterval(() => {
     setTimeout(() => {
         renderMessage(text, false, bot);
     }, Math.random() * 2000);
-}, 30000); // ✅ 30 秒
+}, 30000);
 
 function startBotRandomReply() {}
 
@@ -404,18 +421,34 @@ function sendText() {
 sendBtn.onclick = sendText;
 textInput.addEventListener("keydown", e => e.key === "Enter" && sendText());
 
-/* ===== 录音模拟 ===== */
-let recording = false;
-recordBtn.onmousedown = () => {
-    recording = true;
-    recordBtn.classList.add("recording");
-    recordBtn.textContent = "🔴";
+/* ===== 录音（真实时长）===== */
+recordBtn.onmousedown = async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        recordStartTime = Date.now();
+
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.start();
+        recordBtn.classList.add("recording");
+        recordBtn.textContent = "🔴";
+    } catch {
+        alert("麦克风权限被拒绝 😢");
+    }
 };
+
 recordBtn.onmouseup = () => {
-    recording = false;
+    if (!mediaRecorder) return;
+    mediaRecorder.stop();
     recordBtn.classList.remove("recording");
     recordBtn.textContent = "🎤";
-    renderMessage("", true, currentUser, true);
+
+    const duration = (Date.now() - recordStartTime) / 1000;
+
+    mediaRecorder.addEventListener("dataavailable", () => {
+        renderMessage("", true, currentUser, true, duration);
+    }, { once: true });
 };
 </script>
 
