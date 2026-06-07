@@ -202,6 +202,104 @@ body::after {
     text-decoration: none;
     border-radius: 6px;
 }
+    /* ===== 消息进场动画 ===== */
+.msg {
+    padding: 8px 12px;
+    background: #eef4ff;
+    border-radius: 8px;
+    max-width: 80%;
+    font-size: 15px;
+    color: #333;
+    word-break: break-word;
+    opacity: 0;
+    transform: scale(0.95);
+    animation: msgIn 0.3s ease forwards;
+}
+
+.msg.me {
+    background: #d2f8d2;
+    align-self: flex-end;
+}
+
+@keyframes msgIn {
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ===== 头像 + 昵称 ===== */
+.msg-wrapper {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    max-width: 85%;
+}
+
+.msg-wrapper.me {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.avatar-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #add8e6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.nickname {
+    font-size: 12px;
+    color: #888;
+    margin-bottom: 4px;
+}
+
+/* ===== 语音波形 ===== */
+.voice-msg {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #d2f8d2;
+    border-radius: 20px;
+    max-width: 70%;
+    align-self: flex-end;
+    cursor: pointer;
+}
+
+.voice-wave {
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    height: 14px;
+}
+
+.wave-bar {
+    width: 4px;
+    background: #333;
+    border-radius: 2px;
+    animation: wave 1.2s infinite ease-in-out;
+}
+
+.wave-bar:nth-child(2) { animation-delay: .2s; height: 10px; }
+.wave-bar:nth-child(3) { animation-delay: .4s; height: 14px; }
+.wave-bar:nth-child(4) { animation-delay: .6s; height: 10px; }
+
+@keyframes wave {
+    0%, 100% { transform: scaleY(0.6); }
+    50% { transform: scaleY(1); }
+}
+
+.voice-duration {
+    font-size: 12px;
+    color: #555;
+}
 </style>
 </head>
 
