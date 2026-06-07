@@ -144,35 +144,35 @@
         .planet-button:hover {
             fliter: brightness(1.05);
             /* ===== 彩虹背景动画（与按钮同步 21s）===== */
-body::before {
-    content: "";
-    position: absolute;
-    inset: -50%;               /* 比屏幕更大，防止边缘露白 */
-    background: conic-gradient(
-        from 0deg,
-        #ff0000,
-        #ff7f00,
-        #ffff00,
-        #00ff00,
-        #00ffff,
-        #0000ff,
-        #8b00ff,
-        #ff0000
-    );
-    animation: rainbowBG 21s linear infinite;
-    z-index: -1;
-    opacity: 0.25;           /* 👈 关键：降低亮度，护眼 */
-    filter: blur(80px);      /* 梦幻模糊 */
-}
+        body::before {
+            content: "";
+            position: absolute;
+            inset: -50%;               /* 比屏幕更大，防止边缘露白 */
+            background: conic-gradient(
+                from 0deg,
+                #ff0000,
+                #ff7f00,
+                #ffff00,
+                #00ff00,
+                #00ffff,
+                #0000ff,
+                #8b00ff,
+                #ff0000
+            );
+            animation: rainbowBG 21s linear infinite;
+            z-index: -1;
+            opacity: 0.25;           /* 👈 关键：降低亮度，护眼 */
+            filter: blur(80px);      /* 梦幻模糊 */
+        }
 
-@keyframes rainbowBG {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
+        @keyframes rainbowBG {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
         }
     </style>
 </head>
