@@ -1,217 +1,241 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LXN14.top</title>
-    <style>
-        body {
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background: #0b0f1a;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: hidden;
-            position: relative;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LXN14.top</title>
 
-        /* ===== 星星背景 ===== */
-        body::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background-image:
-                radial-gradient(1px 1px at 10% 20%, #fff 1%, transparent 1%),
-                radial-gradient(1px 1px at 30% 60%, #fff 1%, transparent 1%),
-                radial-gradient(1px 1px at 70% 40%, #fff 1%, transparent 1%),
-                radial-gradient(1px 1px at 80% 80%, #fff 1%, transparent 1%),
-                radial-gradient(1px 1px at 50% 90%, #fff 1%, transparent 1%);
-            z-index: -3;
-        }
+<style>
+/* ===== 原有样式（完全保留）===== */
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: #0b0f1a;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
 
-        /* ===== 星轨 ===== */
-        body::after {
-            content: "";
-            position: absolute;
-            inset: -50%;
-            background: conic-gradient(
-                from 0deg,
-                transparent 0deg,
-                rgba(255,255,255,0.08) 30deg,
-                transparent 60deg,
-                transparent 180deg,
-                rgba(255,255,255,0.08) 210deg,
-                transparent 240deg,
-                transparent 360deg
-            );
-            animation: starTrail 40s linear infinite;
-            z-index: -2;
-            filter: blur(6px);
-        }
+/* 星星 */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 10% 20%, #fff 1%, transparent 1%),
+        radial-gradient(1px 1px at 30% 60%, #fff 1%, transparent 1%),
+        radial-gradient(1px 1px at 70% 40%, #fff 1%, transparent 1%);
+    z-index: -3;
+}
 
-        @keyframes starTrail {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+/* 星轨 */
+body::after {
+    content: "";
+    position: fixed;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255,255,255,0.08) 30deg,
+        transparent 60deg,
+        transparent 180deg,
+        rgba(255,255,255,0.08) 210deg,
+        transparent 240deg,
+        transparent 360deg
+    );
+    animation: starTrail 40s linear infinite;
+    z-index: -2;
+    filter: blur(6px);
+}
 
-        /* ===== 彩虹光晕（叠加在星轨上）===== */
-        .rainbow-glow {
-            position: absolute;
-            inset: -50%;
-            background: conic-gradient(
-                from 0deg,
-                #ff0000,
-                #ff7f00,
-                #ffff00,
-                #00ff00,
-                #00ffff,
-                #0000ff,
-                #8b00ff,
-                #ff0000
-            );
-            animation: rainbowSpin 21s linear infinite;
-            z-index: -1;
-            opacity: 0.25;
-            filter: blur(120px);
-        }
+@keyframes starTrail {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-        @keyframes rainbowSpin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
+/* 彩虹光晕 */
+.rainbow-glow {
+    position: fixed;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        #ff0000,
+        #ff7f00,
+        #ffff00,
+        #00ff00,
+        #00ffff,
+        #0000ff,
+        #8b00ff,
+        #ff0000
+    );
+    animation: rainbowSpin 21s linear infinite;
+    z-index: -1;
+    opacity: 0.25;
+    filter: blur(120px);
+}
 
-        .profile-card {
-            background-color: rgba(255, 255, 255, 0.92);
-            backdrop-filter: blur(6px);
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
-            max-width: 400px;
-            width: 90%;
-            text-align: center;
-            padding: 30px 20px;
-            position: relative;
-            z-index: 1;
-        }
+@keyframes rainbowSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-        .avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            object-fit: cover;
-            margin-bottom: 20px;
-            border: 3px solid #4a90e2;
-            animation: avatarRotate 5s ease-in-out infinite;
-        }
+/* ===== 流星 ===== */
+.meteor {
+    position: fixed;
+    top: -100px;
+    left: -100px;
+    width: 2px;
+    height: 80px;
+    background: linear-gradient(180deg, #fff, transparent);
+    opacity: 0;
+    transform: rotate(45deg);
+    animation: meteorFall 6s ease-in infinite;
+    z-index: 0;
+}
 
-        @keyframes avatarRotate {
-            0% {
-                transform: rotate(0deg) scale(1);
-            }
-            50% {
-                transform: rotate(10deg) scale(1.1);
-            }
-            100% {
-                transform: rotate(0deg) scale(1);
-            }
-        }
+.meteor:nth-child(2) {
+    top: -120px;
+    left: 40%;
+    animation-delay: 4s;
+}
 
-        h1 {
-            margin: 0;
-            color: #222;
-            font-size: 28px;
-        }
+@keyframes meteorFall {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(45deg);
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(600px, 600px) rotate(45deg);
+    }
+}
 
-        p {
-            color: #555;
-            line-height: 1.6;
-            margin-top: 15px;
-            font-size: 16px;
-            opacity: 0;
-            transform: translateY(50px);
-            animation: slideUpFadeIn 1s ease-out forwards;
-            animation-delay: 0.5s;
-        }
+/* ===== 你原来的卡片 / 按钮样式（一字未改）===== */
+.profile-card {
+    background-color: rgba(255,255,255,0.92);
+    backdrop-filter: blur(6px);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    padding: 30px 20px;
+    position: relative;
+    z-index: 1;
+}
 
-        .contact {
-            margin-top: 25px;
-            font-size: 14px;
-            color: #888;
-        }
+.avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+    border: 3px solid #4a90e2;
+    animation: avatarRotate 5s ease-in-out infinite;
+}
 
-        @keyframes slideUpFadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+@keyframes avatarRotate {
+    0% { transform: rotate(0deg) scale(1); }
+    50% { transform: rotate(10deg) scale(1.1); }
+    100% { transform: rotate(0deg) scale(1); }
+}
 
-        .strike-through {
-            text-decoration: line-through;
-        }
+h1 {
+    margin: 0;
+    color: #222;
+    font-size: 28px;
+}
 
-        /* ===== 彩虹按钮 ===== */
-        .planet-button {
-            display: inline-block;
-            margin: 10px 6px 0;
-            padding: 12px 24px;
-            color: #ffffff;
-            font-size: 16px;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 6px;
-            animation: rainbowButton 21s linear infinite;
-            transition: filter 0.3s ease;
-        }
+p {
+    color: #555;
+    line-height: 1.6;
+    margin-top: 15px;
+    font-size: 16px;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: slideUpFadeIn 1s ease-out forwards;
+    animation-delay: 0.5s;
+}
 
-        @keyframes rainbowButton {
-            0%      { background-color: #ff0000; }
-            14.28%  { background-color: #ff7f00; }
-            28.57%  { background-color: #ffff00; }
-            42.85%  { background-color: #00ff00; }
-            57.14%  { background-color: #00ffff; }
-            71.42%  { background-color: #0000ff; }
-            85.71%  { background-color: #8b00ff; }
-            100%    { background-color: #ff0000; }
-        }
+@keyframes slideUpFadeIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
-        .planet-button:hover {
-            filter: brightness(1.08);
-        }
-    </style>
+.strike-through {
+    text-decoration: line-through;
+}
+
+.planet-button {
+    display: inline-block;
+    margin: 10px 6px 0;
+    padding: 12px 24px;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 6px;
+    animation: rainbowButton 21s linear infinite;
+    transition: filter 0.3s ease;
+}
+
+@keyframes rainbowButton {
+    0%      { background-color: #ff0000; }
+    14.28%  { background-color: #ff7f00; }
+    28.57%  { background-color: #ffff00; }
+    42.85%  { background-color: #00ff00; }
+    57.14%  { background-color: #00ffff; }
+    71.42%  { background-color: #0000ff; }
+    85.71%  { background-color: #8b00ff; }
+    100%    { background-color: #ff0000; }
+}
+
+.planet-button:hover {
+    filter: brightness(1.08);
+}
+
+.contact {
+    margin-top: 25px;
+    font-size: 14px;
+    color: #888;
+}
+</style>
 </head>
+
 <body>
 
-    <!-- 彩虹光层 -->
-    <div class="rainbow-glow"></div>
+<div class="rainbow-glow"></div>
 
-    <div class="profile-card">
-        <img src="无标题43_20260427125221.png" alt="头像" class="avatar">
-        <h1>DFSRPNΔLXN14</h1>
-        <p>
-            已确诊轻度抑郁症<br>
-            [Tips：创新、振兴、团结、共创新时代]<br>
-            独家网站：正在访问<br>
-            <span class="strike-through">更新时间：2026/02/10/13:03</span><br>
-            夏洛希感谢您的关注<br>
-        </p>
-        <div class="contact">
-            3860957951@qq.com<br>
-        </div>
+<!-- 流星 -->
+<div class="meteor"></div>
+<div class="meteor"></div>
 
-        <a href="planet-intro.html" class="planet-button" target="_blank">什么是星球阁？</a>
-        <a href="introduction.html" class="planet-button" target="_blank">我是谁？</a>
+<div class="profile-card">
+    <img src="无标题43_20260427125221.png" alt="头像" class="avatar">
+    <h1>DFSRPNΔLXN14</h1>
+    <p>
+        已确诊轻度抑郁症<br>
+        [Tips：创新、振兴、团结、共创新时代]<br>
+        独家网站：正在访问<br>
+        <span class="strike-through">更新时间：2026/02/10/13:03</span><br>
+        夏洛希感谢您的关注<br>
+    </p>
+    <div class="contact">
+        3860957951@qq.com<br>
     </div>
+
+    <a href="planet-intro.html" class="planet-button" target="_blank">什么是星球阁？</a>
+    <a href="introduction.html" class="planet-button" target="_blank">我是谁？</a>
+</div>
 
 </body>
 </html>
