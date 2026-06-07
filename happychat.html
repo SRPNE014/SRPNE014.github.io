@@ -633,9 +633,12 @@ body {
         <button id="signBtn">📅 签到</button>
         <div class="points-bar" id="pointsBar">💰 10</div>
     </div>
+
     <div class="input-bar">
+    <!-- ✅ + 号按钮 -->
     <button class="plus-btn" id="plusBtn">+</button>
 
+    <!-- ✅ 表情面板 -->
     <div class="emoji-panel" id="emojiPanel">
         <span>✅</span>
         <span>👍</span>
@@ -645,8 +648,17 @@ body {
         <span>🔍</span>
     </div>
 
-    <button class="record-btn" id="recordBtn">...</button>
-    <textarea id="textInput"></textarea>
+    <button class="record-btn" id="recordBtn">
+        <span>🎤</span>
+        <div class="record-wave">
+            <div class="bar"></div>
+            <div class="bar"></div>
+            <div class="bar"></div>
+        </div>
+    </button>
+
+    <textarea id="textInput" placeholder="iMessage（Enter 换行，Ctrl+Enter 发送）"></textarea>
+
     <button id="sendBtn">发送</button>
 </div>
 
