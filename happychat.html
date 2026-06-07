@@ -61,10 +61,6 @@ body {
     cursor: pointer;
 }
 
-#shopBtn:hover {
-    opacity: 0.85;
-}
-
 #signBtn {
     background: linear-gradient(135deg, #34c759, #30d158);
     color: #fff;
@@ -105,6 +101,7 @@ body {
     border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
 }
 
+/* ===== 消息区 ===== */
 .chat-box {
     flex: 1;
     overflow-y: auto;
@@ -237,6 +234,7 @@ body {
 
 /* ===== 输入栏 ===== */
 .input-bar {
+    position: relative;
     padding: 12px 16px;
     background: rgba(255, 255, 255, 0.8);
     border-top: 0.5px solid rgba(0, 0, 0, 0.08);
@@ -245,6 +243,52 @@ body {
     align-items: flex-end;
 }
 
+/* ===== + 号按钮 ===== */
+.plus-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #e4e4eb;
+    font-size: 22px;
+    font-weight: 600;
+    color: #007AFF;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* ===== 表情面板 ===== */
+.emoji-panel {
+    position: absolute;
+    bottom: 70px;
+    left: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+    padding: 10px;
+    display: none;
+    gap: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 30;
+}
+
+.emoji-panel.active {
+    display: flex;
+}
+
+.emoji-panel span {
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.emoji-panel span:hover {
+    background: rgba(0, 122, 255, 0.15);
+}
+
+/* ===== 输入框 ===== */
 #textInput {
     flex: 1;
     padding: 10px 14px;
@@ -261,6 +305,7 @@ body {
     field-sizing: content;
 }
 
+/* ===== 发送按钮 ===== */
 #sendBtn {
     padding: 10px 20px;
     border: none;
@@ -353,7 +398,7 @@ body {
     padding: 20px;
     width: 260px;
     text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
     transform: scale(0.95);
     transition: transform 0.2s ease;
 }
@@ -410,7 +455,6 @@ body {
     display: flex;
 }
 
-/* 星轨 */
 .shop-stars {
     position: absolute;
     inset: 0;
@@ -441,7 +485,6 @@ body {
     100% { transform: rotate(360deg); }
 }
 
-/* 流星 */
 .shop-meteor {
     position: absolute;
     top: -100px;
@@ -476,7 +519,6 @@ body {
     }
 }
 
-/* 标题 */
 .shop-title {
     font-size: 48px;
     font-weight: 800;
@@ -488,12 +530,10 @@ body {
     padding: 20px 40px;
     border-radius: 20px;
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     z-index: 2;
     letter-spacing: 4px;
 }
 
-/* 关闭按钮 */
 .shop-close {
     position: absolute;
     top: 20px;
@@ -515,6 +555,13 @@ body {
 
 /* ===== 移动端 ===== */
 @media (max-width: 768px) {
+    .chat-container {
+        width: 100vw;
+        height: 100vh;
+        max-height: none;
+        border-radius: 0;
+    }
+
     .top-bar {
         top: 10px;
         right: 12px;
@@ -531,11 +578,15 @@ body {
         padding: 5px 12px;
     }
 
-    .chat-container {
-        width: 100vw;
-        height: 100vh;
-        max-height: none;
-        border-radius: 0;
+    .emoji-panel {
+        bottom: 64px;
+        left: 8px;
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .emoji-panel span {
+        font-size: 20px;
     }
 
     .message {
@@ -563,70 +614,13 @@ body {
         padding: 16px 28px;
     }
 }
-    /* ===== + 号按钮 ===== */
-.plus-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    border: none;
-    background: #e4e4eb;
-    font-size: 22px;
-    font-weight: 600;
-    color: #007AFF;
-    cursor: pointer;
-    flex-shrink: 0;
-}
-
-/* ===== 表情面板 ===== */
-.emoji-panel {
-    position: absolute;
-    bottom: 70px;
-    left: 16px;
-    background: rgba(255,255,255,0.95);
-    backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 10px;
-    display: none;
-    gap: 10px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    z-index: 30;
-}
-
-.emoji-panel.active {
-    display: flex;
-}
-
-.emoji-panel span {
-    font-size: 22px;
-    cursor: pointer;
-    padding: 4px;
-    border-radius: 8px;
-    transition: background 0.2s;
-}
-
-.emoji-panel span:hover {
-    background: rgba(0,122,255,0.15);
-}
-
-/* 移动端 */
-@media (max-width: 768px) {
-    .emoji-panel {
-        bottom: 64px;
-        left: 8px;
-        gap: 6px;
-        padding: 8px;
-    }
-
-    .emoji-panel span {
-        font-size: 20px;
-    }
-}
 </style>
 </head>
 
 <body>
 
 <div class="chat-container">
+
     <!-- 右上角 -->
     <div class="top-bar">
         <button id="shopBtn">🛒 积分商城</button>
@@ -634,41 +628,25 @@ body {
         <div class="points-bar" id="pointsBar">💰 10</div>
     </div>
 
-    <div class="input-bar">
-    <!-- ✅ + 号按钮 -->
-    <button class="plus-btn" id="plusBtn">+</button>
-
-    <!-- ✅ 表情面板 -->
-    <div class="emoji-panel" id="emojiPanel">
-        <span>✅</span>
-        <span>👍</span>
-        <span>😄</span>
-        <span>👌</span>
-        <span>🤔</span>
-        <span>🔍</span>
-    </div>
-
-    <button class="record-btn" id="recordBtn">
-        <span>🎤</span>
-        <div class="record-wave">
-            <div class="bar"></div>
-            <div class="bar"></div>
-            <div class="bar"></div>
-        </div>
-    </button>
-
-    <textarea id="textInput" placeholder="iMessage（Enter 换行，Ctrl+Enter 发送）"></textarea>
-
-    <button id="sendBtn">发送</button>
-</div>
-
     <div class="header">💬 我的专属聊天室</div>
 
     <div class="chat-box" id="chatBox">
         <div class="system-toast" id="systemToast">✅ 聊天室已连接</div>
     </div>
 
+    <!-- 输入栏 -->
     <div class="input-bar">
+        <button class="plus-btn" id="plusBtn">+</button>
+
+        <div class="emoji-panel" id="emojiPanel">
+            <span>✅</span>
+            <span>👍</span>
+            <span>😄</span>
+            <span>👌</span>
+            <span>🤔</span>
+            <span>🔍</span>
+        </div>
+
         <button class="record-btn" id="recordBtn">
             <span>🎤</span>
             <div class="record-wave">
@@ -689,9 +667,7 @@ body {
     <div class="shop-stars"></div>
     <div class="shop-meteor"></div>
     <div class="shop-meteor"></div>
-
     <div class="shop-title">积 分 商 城</div>
-
     <button class="shop-close" id="closeShop">✕</button>
 </div>
 
@@ -707,20 +683,6 @@ body {
 </div>
 
 <script>
-/* ===== 用户 ===== */
-const currentUser = {
-    uid: "me",
-    nickname: "夏洛希",
-    avatar: "夏"
-};
-
-/* ===== 机器人 ===== */
-const bots = [
-    { uid: "bot1", nickname: "张三", avatar: "张", texts: ["你好呀 👋", "今天天气不错～", "你今天开心吗？"] },
-    { uid: "bot2", nickname: "李四", avatar: "李", texts: ["欢迎来到聊天室～", "有什么我可以帮你的？", "别客气～"] },
-    { uid: "bot3", nickname: "王五", avatar: "王", texts: ["今天也要开心哦 🌈", "记得多喝水～", "分享点好玩的呗"] }
-];
-
 /* ===== DOM ===== */
 const chatBox = document.getElementById("chatBox");
 const textInput = document.getElementById("textInput");
@@ -731,21 +693,25 @@ const signBtn = document.getElementById("signBtn");
 const shopBtn = document.getElementById("shopBtn");
 const shopModal = document.getElementById("shopModal");
 const closeShop = document.getElementById("closeShop");
+const plusBtn = document.getElementById("plusBtn");
+const emojiPanel = document.getElementById("emojiPanel");
 
-/* ===== 积分系统 ===== */
+/* ===== 积分 ===== */
 let points = parseInt(localStorage.getItem("points")) || 10;
 const today = new Date().toDateString();
-const lastLogin = localStorage.getItem("lastLogin");
 
-if (lastLogin !== today) {
+if (localStorage.getItem("lastLogin") !== today) {
     points += 10;
     localStorage.setItem("lastLogin", today);
-    showSystemToast("🎉 每日登录 +10 积分");
 }
 localStorage.setItem("points", points);
 
-    /* ===== 签到系统（连续天数）===== */
-const SIGN_KEY = "lastSignDate";
+function updatePoints() {
+    document.getElementById("pointsBar").textContent = "💰 " + points;
+    localStorage.setItem("points", points);
+}
+
+/* ===== 签到（防刷 + 连续天数）===== */
 const STREAK_KEY = "signStreak";
 
 function getStreak() {
@@ -753,24 +719,24 @@ function getStreak() {
 }
 
 function updateStreak() {
-    const lastSign = localStorage.getItem(SIGN_KEY);
+    const lastSign = localStorage.getItem("lastSignDate");
     let streak = getStreak();
 
-    if (lastSign === today) return streak; // 今天已签
+    if (lastSign === today) return streak;
 
     if (lastSign === new Date(Date.now() - 86400000).toDateString()) {
-        streak++; // 连续
+        streak++;
     } else {
-        streak = 1; // 断了
+        streak = 1;
     }
 
-    localStorage.setItem(SIGN_KEY, today);
+    localStorage.setItem("lastSignDate", today);
     localStorage.setItem(STREAK_KEY, streak);
     return streak;
 }
 
 function checkSignStatus() {
-    const lastSign = localStorage.getItem(SIGN_KEY);
+    const lastSign = localStorage.getItem("lastSignDate");
     const streak = getStreak();
 
     if (lastSign === today) {
@@ -799,6 +765,21 @@ signBtn.onclick = () => {
 shopBtn.onclick = () => shopModal.classList.add("active");
 closeShop.onclick = () => shopModal.classList.remove("active");
 
+/* ===== 表情 ===== */
+plusBtn.onclick = () => emojiPanel.classList.toggle("active");
+
+emojiPanel.querySelectorAll("span").forEach(span => {
+    span.onclick = () => {
+        const start = textInput.selectionStart;
+        const end = textInput.selectionEnd;
+        const before = textInput.value.substring(0, start);
+        const after = textInput.value.substring(end);
+        textInput.value = before + span.textContent + after;
+        textInput.selectionStart = textInput.selectionEnd = start + span.textContent.length;
+        textInput.focus();
+    };
+});
+
 /* ===== 确认弹窗 ===== */
 const confirmModal = document.getElementById("confirmModal");
 const confirmText = document.getElementById("confirmText");
@@ -823,7 +804,7 @@ confirmBtn.onclick = () => {
     hideConfirm();
 };
 
-/* ===== 录音限制 ===== */
+/* ===== 录音 ===== */
 const MIN_DURATION = 0.5;
 const MAX_DURATION = 30;
 
@@ -831,6 +812,10 @@ let mediaRecorder;
 let audioChunks = [];
 let recordStartTime = 0;
 let maxDurationTimer = null;
+
+/* ===== 防刷 ===== */
+let messageHistory = [];
+let messageCount = 0;
 
 /* ===== 系统提示 ===== */
 function showSystemToast(msg) {
@@ -888,7 +873,6 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
                 });
             });
         }
-
     } else {
         content = document.createTextNode(text);
         msg.dataset.text = text;
@@ -914,24 +898,6 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-/* ===== 防刷 ===== */
-let messageHistory = [];
-let messageCount = 0;
-
-/* ===== 机器人问候 ===== */
-window.onload = () => {
-    updatePoints();
-    checkSignStatus();
-    showSystemToast("✅ 聊天室已连接");
-
-    bots.forEach((bot, i) => {
-        setTimeout(() => {
-            const t = bot.texts[Math.floor(Math.random() * bot.texts.length)];
-            renderMessage(t, false, bot);
-        }, 800 * (i + 1));
-    });
-};
-
 /* ===== 发送文本 ===== */
 function sendText() {
     const text = textInput.value.trim();
@@ -951,7 +917,8 @@ function sendText() {
         return;
     }
 
-    renderMessage(text, true, currentUser);
+    renderMessage(text, true, { nickname: "夏洛希", avatar: "夏" });
+
     textInput.value = "";
     textInput.style.height = "auto";
 
@@ -963,7 +930,6 @@ function sendText() {
     }
 }
 
-/* ===== 快捷键 ===== */
 textInput.addEventListener("keydown", e => {
     if (e.key === "Enter" && e.ctrlKey) {
         e.preventDefault();
@@ -973,7 +939,7 @@ textInput.addEventListener("keydown", e => {
 
 sendBtn.onclick = sendText;
 
-/* ===== 录音 ===== */
+/* ===== 录音逻辑 ===== */
 recordBtn.onmousedown = async () => {
     try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -1010,8 +976,15 @@ recordBtn.onmouseup = () => {
         }
         const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
         const audioUrl = URL.createObjectURL(audioBlob);
-        renderMessage("", true, currentUser, true, duration, audioUrl);
+        renderMessage("", true, { nickname: "夏洛希", avatar: "夏" }, true, duration, audioUrl);
     }, { once: true });
+};
+
+/* ===== 初始化 ===== */
+window.onload = () => {
+    updatePoints();
+    checkSignStatus();
+    showSystemToast("✅ 聊天室已连接");
 };
 </script>
 
