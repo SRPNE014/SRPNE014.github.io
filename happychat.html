@@ -290,22 +290,66 @@ body::after {
 </div>
 
 <script>
-/* ===== 当前用户（以后直接换成 Firebase Auth）===== */
+/* ===== 当前用户 ===== */
 const currentUser = {
     uid: "me",
     nickname: "夏洛希",
     avatar: "夏"
 };
 
-/* ===== 文本消息 ===== */
+/* ===== 机器人 ===== */
+const bots = [
+    { uid: "bot1", nickname: "张三", avatar: "张", text: "你好呀 👋" },
+    { uid: "bot2", nickname: "李四", avatar: "李", text: "欢迎来到聊天室～" },
+    { uid: "bot3", nickname: "王五", avatar: "王", text: "今天也要开心哦 🌈" }
+];
+
+/* ===== 页面加载后机器人依次说话 ===== */
+window.onload = () => {
+    bots.forEach((bot, index) => {
+        setTimeout(() => {
+            renderMessage(bot.text, false, bot);
+        }, 800 * (index + 1));
+    });
+};
+
+/* ===== 文本发送 ===== */
 function sendText() {
     const input = document.getElementById("textInput");
     if (!input.value.trim()) return;
-    renderMessage(input.value, true);
+    renderMessage(input.value, true, currentUser);
     input.value = "";
 }
 
-/* ===== 语音消息 ===== */
+/* ===== 渲染消息 ===== */
+function renderMessage(text, isMe, user = currentUser) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "msg-wrapper " + (isMe ? "me" : "");
+
+    const avatar = document.createElement("div");
+    avatar.className = "avatar-mini";
+    avatar.textContent = user.avatar;
+
+    const content = document.createElement("div");
+
+    const nick = document.createElement("div");
+    nick.className = "nickname";
+    nick.textContent = user.nickname;
+
+    const msg = document.createElement("div");
+    msg.className = "msg";
+    msg.textContent = text;
+
+    content.appendChild(nick);
+    content.appendChild(msg);
+    wrapper.appendChild(avatar);
+    wrapper.appendChild(content);
+
+    document.getElementById("messages").appendChild(wrapper);
+    scrollBottom();
+}
+
+/* ===== 语音（保持不变）===== */
 let mediaRecorder;
 let audioChunks = [];
 
@@ -331,34 +375,6 @@ mediaRecorder?.addEventListener("stop", async () => {
 function stopVoice() {
     mediaRecorder?.stop();
     document.getElementById("micBtn").classList.remove("recording");
-}
-
-/* ===== 渲染 ===== */
-function renderMessage(text, isMe) {
-    const wrapper = document.createElement("div");
-    wrapper.className = "msg-wrapper " + (isMe ? "me" : "");
-
-    const avatar = document.createElement("div");
-    avatar.className = "avatar-mini";
-    avatar.textContent = isMe ? currentUser.avatar : "?";
-
-    const content = document.createElement("div");
-
-    const nick = document.createElement("div");
-    nick.className = "nickname";
-    nick.textContent = isMe ? currentUser.nickname : "访客";
-
-    const msg = document.createElement("div");
-    msg.className = "msg";
-    msg.textContent = text;
-
-    content.appendChild(nick);
-    content.appendChild(msg);
-    wrapper.appendChild(avatar);
-    wrapper.appendChild(content);
-
-    document.getElementById("messages").appendChild(wrapper);
-    scrollBottom();
 }
 
 function renderVoice(base64) {
@@ -410,6 +426,3 @@ function blobToBase64(blob) {
     });
 }
 </script>
-
-</body>
-</html>
