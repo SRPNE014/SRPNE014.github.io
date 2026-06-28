@@ -85,6 +85,23 @@ body {
     pointer-events: none;
 }
 
+/* ===== 新增：重置头像按钮 ===== */
+#resetAvatarBtn {
+    background: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#resetAvatarBtn:hover {
+    background: rgba(255, 59, 48, 0.2);
+}
+
 .points-bar {
     background: linear-gradient(135deg, #ffd700, #ffb300);
     color: #fff;
@@ -202,25 +219,6 @@ body {
     height: 100%;
     object-fit: cover;
     border-radius: 50%;
-}
-
-/* 头像 hover 遮罩提示 */
-.avatar::after {
-    content: "📷";
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.45);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 12px;
-    opacity: 0;
-    transition: opacity 0.2s;
-}
-
-.avatar:hover::after {
-    opacity: 1;
 }
 
 .nickname {
@@ -415,7 +413,7 @@ body {
     100% { transform: scale(1); }
 }
 
-/* ===== 确认弹窗 ===== */
+/* ===== 确认弹窗（通用） ===== */
 .confirm-modal {
     position: fixed;
     inset: 0;
@@ -673,7 +671,6 @@ body {
     border-radius: 50%;
 }
 
-/* 头像上传 hover 遮罩 */
 .profile-avatar::after {
     content: "📷 更换";
     position: absolute;
@@ -720,7 +717,6 @@ body {
     word-break: break-word;
 }
 
-/* 编辑按钮 */
 .edit-signature-btn {
     position: absolute;
     top: -8px;
@@ -754,7 +750,6 @@ body {
     display: inline-block;
 }
 
-/* 编辑模式 */
 .signature-edit-container {
     display: none;
     flex-direction: column;
@@ -943,6 +938,8 @@ body {
     <div class="top-bar">
         <button id="shopBtn">🛒 积分商城</button>
         <button id="signBtn">📅 签到</button>
+        <!-- 新增：重置头像按钮 -->
+        <button id="resetAvatarBtn">🔄 重置头像</button>
         <div class="points-bar" id="pointsBar">💰 10</div>
     </div>
 
@@ -1050,6 +1047,7 @@ const emojiPanel = document.getElementById("emojiPanel");
 const profileModal = document.getElementById("profileModal");
 const closeProfile = document.getElementById("closeProfile");
 const avatarUpload = document.getElementById("avatarUpload");
+const resetAvatarBtn = document.getElementById("resetAvatarBtn");
 
 /* ===== 头像上传 DOM ===== */
 const profileAvatarBig = document.getElementById("profileAvatarBig");
@@ -1069,11 +1067,10 @@ const SIGNATURE_KEY = "userSignature";
 
 /* ===== 头像上传逻辑 ===== */
 
-// 加载已保存的头像（同步到所有位置）
+// 加载已保存的头像
 function loadAvatar() {
     const saved = localStorage.getItem(AVATAR_KEY);
     if (saved) {
-        // 个人主页大头像 → 显示图片
         profileAvatarText.style.display = "none";
         let img = profileAvatarBig.querySelector("img");
         if (!img) {
@@ -1082,7 +1079,6 @@ function loadAvatar() {
         }
         img.src = saved;
 
-        // 聊天室所有头像 → 替换成图片
         document.querySelectorAll(".avatar").forEach(av => {
             av.innerHTML = "";
             const imgEl = document.createElement("img");
@@ -1093,23 +1089,19 @@ function loadAvatar() {
 }
 
 // 触发文件选择
-function triggerAvatarUpload() {
-    avatarUpload.click();
-}
+profileAvatarBig.onclick = () => avatarUpload.click();
 
 // 处理文件选择
 avatarUpload.addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // 校验文件类型
     if (!file.type.startsWith("image/")) {
         showSystemToast("请选择图片文件～");
         avatarUpload.value = "";
         return;
     }
 
-    // 校验文件大小（限制 5MB）
     if (file.size > 5 * 1024 * 1024) {
         showSystemToast("图片不能超过 5MB～");
         avatarUpload.value = "";
@@ -1127,8 +1119,18 @@ avatarUpload.addEventListener("change", e => {
     avatarUpload.value = "";
 });
 
-// 点击个人主页大头像 → 更换
-profileAvatarBig.onclick = triggerAvatarUpload;
+/* ===== 重置头像逻辑 ===== */
+resetAvatarBtn.onclick = () => {
+    showConfirm("确定要重置头像吗？这将恢复为你上传的自定义头像。", () => {
+        const saved = localStorage.getItem(AVATAR_KEY);
+        if (saved) {
+            loadAvatar();
+            showSystemToast("✅ 头像已重置");
+        } else {
+            showSystemToast("⚠️ 未找到已上传的头像");
+        }
+    });
+};
 
 /* ===== 签名编辑逻辑 ===== */
 
@@ -1197,7 +1199,7 @@ function updatePoints() {
     localStorage.setItem("points", points);
 }
 
-/* ===== 签到（防刷 + 连续天数）===== */
+/* ===== 签到 ===== */
 const STREAK_KEY = "signStreak";
 
 function getStreak() {
@@ -1251,7 +1253,7 @@ signBtn.onclick = () => {
 shopBtn.onclick = () => shopModal.classList.add("active");
 closeShop.onclick = () => shopModal.classList.remove("active");
 
-/* ===== 个人主页（点击头像打开）===== */
+/* ===== 个人主页 ===== */
 function openProfile() {
     loadSignature();
     loadAvatar();
@@ -1330,7 +1332,7 @@ function showSystemToast(msg) {
     systemToast.style.animation = "toastInOut 3s ease forwards";
 }
 
-/* ===== 渲染消息（头像可点击 + 头像同步）===== */
+/* ===== 渲染消息 ===== */
 function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audioUrl = null) {
     const msg = document.createElement("div");
     msg.className = `message ${isSelf ? "self" : "other"}`;
@@ -1338,7 +1340,6 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
     const avatar = document.createElement("span");
     avatar.className = "avatar";
 
-    // 如果有自定义头像，使用图片
     const savedAvatar = localStorage.getItem(AVATAR_KEY);
     if (savedAvatar && isSelf) {
         const img = document.createElement("img");
@@ -1348,7 +1349,6 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
         avatar.textContent = sender.avatar;
     }
 
-    // ✅ 点击头像 → 打开个人主页
     avatar.onclick = () => openProfile();
 
     const nick = document.createElement("span");
