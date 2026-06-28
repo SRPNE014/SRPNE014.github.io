@@ -7,6 +7,12 @@
 
 <style>
 /* ===== iOS 26 纯白风 ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
                  "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -166,6 +172,7 @@ body {
     border-bottom-left-radius: 4px;
 }
 
+/* ===== 头像（可点击）===== */
 .avatar {
     width: 32px;
     height: 32px;
@@ -179,6 +186,13 @@ body {
     color: #fff;
     margin-right: 8px;
     vertical-align: middle;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px rgba(52, 195, 89, 0.4);
 }
 
 .nickname {
@@ -553,7 +567,141 @@ body {
     background: rgba(255,255,255,0.2);
 }
 
-/* ===== 移动端 ===== */
+/* ===== 个人主页弹窗 ===== */
+.profile-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.profile-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    padding: 32px 40px;
+    border-radius: 24px;
+    box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.08),
+        0 30px 80px rgba(0, 0, 0, 0.12);
+    animation: profileIn 0.3s ease;
+    max-width: 500px;
+    width: 90vw;
+}
+
+@keyframes profileIn {
+    from { opacity: 0; transform: scale(0.92) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* 左侧：头像 + 昵称 */
+.profile-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #34c759, #30d158);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(52, 195, 89, 0.35);
+}
+
+.profile-nickname {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1d1d1f;
+    white-space: nowrap;
+}
+
+/* 右侧：个性签名 */
+.profile-right {
+    display: flex;
+    align-items: center;
+    min-height: 88px;
+}
+
+.profile-signature {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #86868b;
+    font-style: italic;
+    border-left: 3px solid #007AFF;
+    padding-left: 18px;
+}
+
+/* 关闭按钮 */
+.profile-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.08);
+    color: #1d1d1f;
+    border: none;
+    font-size: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.profile-close:hover {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* 移动端：纵向排列 */
+@media (max-width: 540px) {
+    .profile-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 28px 24px;
+        gap: 18px;
+    }
+
+    .profile-right {
+        min-height: auto;
+    }
+
+    .profile-signature {
+        border-left: none;
+        padding-left: 0;
+        border-top: 2px solid #007AFF;
+        padding-top: 14px;
+    }
+
+    .profile-avatar {
+        width: 72px;
+        height: 72px;
+        font-size: 28px;
+    }
+}
+
+/* ===== 移动端（聊天室）===== */
 @media (max-width: 768px) {
     .chat-container {
         width: 100vw;
@@ -662,6 +810,22 @@ body {
     </div>
 </div>
 
+<!-- 个人主页弹窗 -->
+<div class="profile-modal" id="profileModal">
+    <button class="profile-close" id="closeProfile">✕</button>
+    <div class="profile-card">
+        <!-- 左侧：头像 + 昵称 -->
+        <div class="profile-left">
+            <div class="profile-avatar">夏</div>
+            <div class="profile-nickname">夏洛希</div>
+        </div>
+        <!-- 右侧：个性签名 -->
+        <div class="profile-right">
+            <p class="profile-signature">"万物皆有裂痕，那是光照进来的地方。"</p>
+        </div>
+    </div>
+</div>
+
 <!-- 积分商城 -->
 <div class="shop-modal" id="shopModal">
     <div class="shop-stars"></div>
@@ -695,6 +859,8 @@ const shopModal = document.getElementById("shopModal");
 const closeShop = document.getElementById("closeShop");
 const plusBtn = document.getElementById("plusBtn");
 const emojiPanel = document.getElementById("emojiPanel");
+const profileModal = document.getElementById("profileModal");
+const closeProfile = document.getElementById("closeProfile");
 
 /* ===== 积分 ===== */
 let points = parseInt(localStorage.getItem("points")) || 10;
@@ -765,6 +931,22 @@ signBtn.onclick = () => {
 shopBtn.onclick = () => shopModal.classList.add("active");
 closeShop.onclick = () => shopModal.classList.remove("active");
 
+/* ===== 个人主页（点击头像打开）===== */
+function openProfile() {
+    profileModal.classList.add("active");
+}
+
+function closeProfileModal() {
+    profileModal.classList.remove("active");
+}
+
+closeProfile.onclick = closeProfileModal;
+
+// 点击弹窗背景也关闭
+profileModal.addEventListener("click", e => {
+    if (e.target === profileModal) closeProfileModal();
+});
+
 /* ===== 表情 ===== */
 plusBtn.onclick = () => emojiPanel.classList.toggle("active");
 
@@ -825,7 +1007,7 @@ function showSystemToast(msg) {
     systemToast.style.animation = "toastInOut 3s ease forwards";
 }
 
-/* ===== 渲染消息 ===== */
+/* ===== 渲染消息（头像可点击）===== */
 function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audioUrl = null) {
     const msg = document.createElement("div");
     msg.className = `message ${isSelf ? "self" : "other"}`;
@@ -833,6 +1015,9 @@ function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audi
     const avatar = document.createElement("span");
     avatar.className = "avatar";
     avatar.textContent = sender.avatar;
+
+    // ✅ 点击头像 → 打开个人主页
+    avatar.onclick = () => openProfile();
 
     const nick = document.createElement("span");
     nick.className = "nickname";
