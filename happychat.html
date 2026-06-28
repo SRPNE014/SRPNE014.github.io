@@ -172,7 +172,7 @@ body {
     border-bottom-left-radius: 4px;
 }
 
-/* ===== 头像（可点击）===== */
+/* ===== 头像（可点击上传）===== */
 .avatar {
     width: 32px;
     height: 32px;
@@ -188,11 +188,39 @@ body {
     vertical-align: middle;
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+    position: relative;
 }
 
 .avatar:hover {
     transform: scale(1.1);
     box-shadow: 0 0 0 3px rgba(52, 195, 89, 0.4);
+}
+
+.avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* 头像 hover 遮罩提示 */
+.avatar::after {
+    content: "📷";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.avatar:hover::after {
+    opacity: 1;
 }
 
 .nickname {
@@ -600,6 +628,7 @@ body {
     animation: profileIn 0.3s ease;
     max-width: 520px;
     width: 90vw;
+    position: relative;
 }
 
 @keyframes profileIn {
@@ -627,6 +656,41 @@ body {
     color: #fff;
     font-weight: 700;
     box-shadow: 0 6px 20px rgba(52, 195, 89, 0.35);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+/* 头像上传 hover 遮罩 */
+.profile-avatar::after {
+    content: "📷 更换";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.profile-avatar:hover::after {
+    opacity: 1;
 }
 
 .profile-nickname {
@@ -656,7 +720,7 @@ body {
     word-break: break-word;
 }
 
-/* 编辑按钮（铅笔）*/
+/* 编辑按钮 */
 .edit-signature-btn {
     position: absolute;
     top: -8px;
@@ -725,24 +789,26 @@ body {
     justify-content: flex-end;
 }
 
-.signature-edit-actions button {
-    padding: 6px 16px;
+.sig-btn-cancel {
+    background: #e4e4eb;
+    color: #1d1d1f;
     border: none;
+    padding: 6px 16px;
     border-radius: 10px;
     font-size: 13px;
     font-weight: 600;
     cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-.sig-btn-cancel {
-    background: #e4e4eb;
-    color: #1d1d1f;
 }
 
 .sig-btn-confirm {
     background: #007AFF;
     color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
 .signature-display {
@@ -914,23 +980,26 @@ body {
     </div>
 </div>
 
+<!-- 隐藏的文件上传 input -->
+<input type="file" id="avatarUpload" accept="image/*" style="display:none">
+
 <!-- 个人主页弹窗 -->
 <div class="profile-modal" id="profileModal">
     <button class="profile-close" id="closeProfile">✕</button>
     <div class="profile-card">
         <!-- 左侧：头像 + 昵称 -->
         <div class="profile-left">
-            <div class="profile-avatar">夏</div>
+            <div class="profile-avatar" id="profileAvatarBig">
+                <span id="profileAvatarText">夏</span>
+            </div>
             <div class="profile-nickname">夏洛希</div>
         </div>
         <!-- 右侧：个性签名 -->
         <div class="profile-right">
             <div class="profile-signature-wrapper">
-                <!-- 查看模式 -->
                 <p class="profile-signature" id="signatureDisplay">
                     "万物皆有裂痕，那是光照进来的地方。"
                 </p>
-                <!-- 编辑按钮 -->
                 <button class="edit-signature-btn" id="editSigBtn" title="编辑签名">✏️</button>
             </div>
             <!-- 编辑模式 -->
@@ -980,8 +1049,15 @@ const plusBtn = document.getElementById("plusBtn");
 const emojiPanel = document.getElementById("emojiPanel");
 const profileModal = document.getElementById("profileModal");
 const closeProfile = document.getElementById("closeProfile");
+const avatarUpload = document.getElementById("avatarUpload");
 
-/* ===== 个人主页 DOM ===== */
+/* ===== 头像上传 DOM ===== */
+const profileAvatarBig = document.getElementById("profileAvatarBig");
+const profileAvatarText = document.getElementById("profileAvatarText");
+
+const AVATAR_KEY = "userAvatar";
+
+/* ===== 个人主页签名 DOM ===== */
 const signatureDisplay = document.getElementById("signatureDisplay");
 const editSigBtn = document.getElementById("editSigBtn");
 const sigEditContainer = document.getElementById("sigEditContainer");
@@ -989,8 +1065,72 @@ const sigEditInput = document.getElementById("sigEditInput");
 const sigCancelBtn = document.getElementById("sigCancelBtn");
 const sigConfirmBtn = document.getElementById("sigConfirmBtn");
 
-/* ===== 签名编辑逻辑 ===== */
 const SIGNATURE_KEY = "userSignature";
+
+/* ===== 头像上传逻辑 ===== */
+
+// 加载已保存的头像（同步到所有位置）
+function loadAvatar() {
+    const saved = localStorage.getItem(AVATAR_KEY);
+    if (saved) {
+        // 个人主页大头像 → 显示图片
+        profileAvatarText.style.display = "none";
+        let img = profileAvatarBig.querySelector("img");
+        if (!img) {
+            img = document.createElement("img");
+            profileAvatarBig.appendChild(img);
+        }
+        img.src = saved;
+
+        // 聊天室所有头像 → 替换成图片
+        document.querySelectorAll(".avatar").forEach(av => {
+            av.innerHTML = "";
+            const imgEl = document.createElement("img");
+            imgEl.src = saved;
+            av.appendChild(imgEl);
+        });
+    }
+}
+
+// 触发文件选择
+function triggerAvatarUpload() {
+    avatarUpload.click();
+}
+
+// 处理文件选择
+avatarUpload.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 校验文件类型
+    if (!file.type.startsWith("image/")) {
+        showSystemToast("请选择图片文件～");
+        avatarUpload.value = "";
+        return;
+    }
+
+    // 校验文件大小（限制 5MB）
+    if (file.size > 5 * 1024 * 1024) {
+        showSystemToast("图片不能超过 5MB～");
+        avatarUpload.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        const base64 = ev.target.result;
+        localStorage.setItem(AVATAR_KEY, base64);
+        loadAvatar();
+        showSystemToast("📷 头像已更新");
+    };
+    reader.readAsDataURL(file);
+    avatarUpload.value = "";
+});
+
+// 点击个人主页大头像 → 更换
+profileAvatarBig.onclick = triggerAvatarUpload;
+
+/* ===== 签名编辑逻辑 ===== */
 
 // 加载已保存的签名
 function loadSignature() {
@@ -1113,12 +1253,12 @@ closeShop.onclick = () => shopModal.classList.remove("active");
 
 /* ===== 个人主页（点击头像打开）===== */
 function openProfile() {
-    loadSignature(); // 每次打开时刷新签名
+    loadSignature();
+    loadAvatar();
     profileModal.classList.add("active");
 }
 
 function closeProfileModal() {
-    // 关闭时退出编辑模式
     sigEditContainer.classList.remove("active");
     signatureDisplay.classList.remove("hidden");
     profileModal.classList.remove("active");
@@ -1190,14 +1330,23 @@ function showSystemToast(msg) {
     systemToast.style.animation = "toastInOut 3s ease forwards";
 }
 
-/* ===== 渲染消息（头像可点击）===== */
+/* ===== 渲染消息（头像可点击 + 头像同步）===== */
 function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audioUrl = null) {
     const msg = document.createElement("div");
     msg.className = `message ${isSelf ? "self" : "other"}`;
 
     const avatar = document.createElement("span");
     avatar.className = "avatar";
-    avatar.textContent = sender.avatar;
+
+    // 如果有自定义头像，使用图片
+    const savedAvatar = localStorage.getItem(AVATAR_KEY);
+    if (savedAvatar && isSelf) {
+        const img = document.createElement("img");
+        img.src = savedAvatar;
+        avatar.appendChild(img);
+    } else {
+        avatar.textContent = sender.avatar;
+    }
 
     // ✅ 点击头像 → 打开个人主页
     avatar.onclick = () => openProfile();
@@ -1353,6 +1502,7 @@ window.onload = () => {
     updatePoints();
     checkSignStatus();
     loadSignature();
+    loadAvatar();
     showSystemToast("✅ 聊天室已连接");
 };
 </script>
