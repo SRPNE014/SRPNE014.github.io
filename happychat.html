@@ -35,635 +35,1478 @@ body {
     background: rgba(245, 245, 247, 0.85);
     border-radius: 22px;
     backdrop-filter: blur(20px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.08),
+        0 20px 60px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
     overflow: hidden;
     position: relative;
 }
 
-/* --- 顶部导航栏 --- */
+/* ===== 右上角 ===== */
+.top-bar {
+    position: absolute;
+    top: 12px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 20;
+}
+
+#shopBtn {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+#signBtn {
+    background: linear-gradient(135deg, #34c759, #30d158);
+    color: #fff;
+    border: none;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+#signBtn:disabled {
+    opacity: 0.5;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* ===== 新增：重置头像按钮 ===== */
+#resetAvatarBtn {
+    background: rgba(255, 59, 48, 0.1);
+    color: #ff3b30;
+    border: 1px solid rgba(255, 59, 48, 0.3);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#resetAvatarBtn:hover {
+    background: rgba(255, 59, 48, 0.2);
+}
+
+.points-bar {
+    background: linear-gradient(135deg, #ffd700, #ffb300);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(255, 183, 0, 0.3);
+    user-select: none;
+}
+
+/* ===== 标题 ===== */
 .header {
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: transparent;
-    border-bottom: 1px solid rgba(0,0,0,0.03);
-    position: relative;
-    z-index: 10;
-}
-
-.header-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    /* 给标题加一点左边距，避免太贴边 */
-    padding-left: 10px;
-}
-
-.header-title {
-    font-size: 18px;
+    padding: 16px 20px;
+    text-align: center;
+    font-size: 17px;
     font-weight: 600;
     color: #000;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    background: rgba(255, 255, 255, 0.6);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
 }
 
-.header-right {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-/* --- 功能按钮样式 --- */
-.icon-btn {
-    background: rgba(255,255,255,0.7);
-    border: 1px solid rgba(0,0,0,0.05);
-    padding: 6px 12px;
-    border-radius: 16px;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    white-space: nowrap;
-}
-
-.icon-btn:hover {
-    background: rgba(255,255,255,1);
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-.badge {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 2px 8px;
-    border-radius: 12px;
-    font-size: 12px;
-    font-weight: bold;
-    margin-left: 4px;
-}
-
-.badge-green {
-    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-}
-
-.badge-yellow {
-    background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
-}
-
-/* --- 聊天区域 --- */
-.chat-area {
+/* ===== 消息区 ===== */
+.chat-box {
     flex: 1;
-    padding: 20px;
     overflow-y: auto;
+    padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    background: transparent;
+    gap: 12px;
 }
 
+/* ===== 系统提示 ===== */
+.system-toast {
+    position: absolute;
+    top: 70px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    z-index: 10;
+    opacity: 0;
+    animation: toastInOut 3s ease forwards;
+    pointer-events: none;
+}
+
+@keyframes toastInOut {
+    0% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+/* ===== 消息气泡 ===== */
 .message {
-    max-width: 70%;
+    max-width: 75%;
     padding: 12px 16px;
     border-radius: 18px;
     font-size: 15px;
     line-height: 1.5;
-    position: relative;
     word-wrap: break-word;
+    animation: fadeIn 0.3s ease;
+    position: relative;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .message.self {
-    align-self: flex-end;
     background: #007AFF;
-    color: white;
+    color: #fff;
+    align-self: flex-end;
     border-bottom-right-radius: 4px;
 }
 
 .message.other {
+    background: #e9e9eb;
+    color: #000;
     align-self: flex-start;
-    background: #E5E5EA;
-    color: black;
     border-bottom-left-radius: 4px;
 }
 
-.message .name {
-    font-size: 12px;
-    opacity: 0.7;
-    margin-bottom: 4px;
-    font-weight: 500;
-}
-
-/* --- 输入区域 --- */
-.input-area {
-    padding: 15px 20px;
-    background: rgba(255,255,255,0.8);
-    border-top: 1px solid rgba(0,0,0,0.03);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
-}
-
-.input-box {
-    flex: 1;
-    padding: 10px 15px;
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 20px;
-    font-size: 15px;
-    outline: none;
-    background: rgba(255,255,255,0.9);
-    transition: all 0.2s;
-}
-
-.input-box:focus {
-    border-color: #007AFF;
-    box-shadow: 0 0 0 3px rgba(0,122,255,0.1);
-}
-
-.send-btn {
-    background: #007AFF;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.send-btn:hover {
-    background: #0051D5;
-    transform: scale(1.02);
-}
-
-.action-btn {
-    width: 40px;
-    height: 40px;
+/* ===== 头像（可点击上传）===== */
+.avatar {
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    display: flex;
+    background: linear-gradient(135deg, #34c759, #30d158);
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 18px;
-    background: rgba(255,255,255,0.9);
-    border: 1px solid rgba(0,0,0,0.05);
-}
-
-.action-btn:hover {
-    background: rgba(255,255,255,1);
-    transform: scale(1.05);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-}
-
-/* --- 个人主页/弹窗 --- */
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0,0,0,0.4);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    backdrop-filter: blur(5px);
-}
-
-.modal-content {
-    background: white;
-    padding: 25px;
-    border-radius: 20px;
-    width: 90%;
-    max-width: 400px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
-    text-align: center;
-}
-
-.modal-title {
-    font-size: 20px;
     font-weight: 600;
-    margin-bottom: 20px;
-    color: #000;
-}
-
-.avatar-upload {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: #F2F2F7;
-    margin: 0 auto 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    margin-right: 8px;
+    vertical-align: middle;
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
     overflow: hidden;
     position: relative;
-    border: 2px dashed #D1D1D6;
-    transition: all 0.2s;
 }
 
-.avatar-upload:hover {
-    border-color: #007AFF;
-    background: #E5F1FF;
+.avatar:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px rgba(52, 195, 89, 0.4);
 }
 
-.avatar-upload img {
+.avatar img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 50%;
+}
+
+.nickname {
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: block;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+/* ===== 语音气泡 ===== */
+.voice-bubble {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.voice-duration {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* ===== 声波图 ===== */
+.waveform {
     display: none;
+    align-items: flex-end;
+    gap: 3px;
+    height: 20px;
+    margin-left: 6px;
 }
 
-.signature-input {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #D1D1D6;
-    border-radius: 12px;
-    margin-bottom: 20px;
-    font-size: 15px;
-    outline: none;
-    resize: none;
-    height: 80px;
-    font-family: inherit;
+.voice-bubble.show-wave .waveform {
+    display: flex;
 }
 
-.signature-input:focus {
-    border-color: #007AFF;
+.wave-bar {
+    width: 4px;
+    background: currentColor;
+    border-radius: 2px;
+    animation: wave 1.2s infinite ease-in-out;
 }
 
-.btn-group {
+.wave-bar:nth-child(2) { animation-delay: .2s; height: 14px; }
+.wave-bar:nth-child(3) { animation-delay: .4s; height: 20px; }
+.wave-bar:nth-child(4) { animation-delay: .6s; height: 14px; }
+
+@keyframes wave {
+    0%, 100% { transform: scaleY(0.6); }
+    50% { transform: scaleY(1); }
+}
+
+/* ===== 输入栏 ===== */
+.input-bar {
+    position: relative;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.8);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.08);
     display: flex;
     gap: 10px;
-    justify-content: center;
+    align-items: flex-end;
 }
 
-.btn {
-    padding: 10px 20px;
-    border-radius: 12px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
+/* ===== + 号按钮 ===== */
+.plus-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
     border: none;
-    transition: all 0.2s;
+    background: #e4e4eb;
+    font-size: 22px;
+    font-weight: 600;
+    color: #007AFF;
+    cursor: pointer;
+    flex-shrink: 0;
 }
 
-.btn-primary {
-    background: #007AFF;
-    color: white;
-}
-
-.btn-primary:hover {
-    background: #0051D5;
-}
-
-.btn-secondary {
-    background: #F2F2F7;
-    color: #000;
-}
-
-.btn-secondary:hover {
-    background: #E5E5EA;
-}
-
-/* --- 警告弹窗 --- */
-.alert-box {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: white;
-    padding: 20px 30px;
+/* ===== 表情面板 ===== */
+.emoji-panel {
+    position: absolute;
+    bottom: 70px;
+    left: 16px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
     border-radius: 16px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    z-index: 1001;
-    text-align: center;
+    padding: 10px;
+    display: none;
+    gap: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    z-index: 30;
+}
+
+.emoji-panel.active {
+    display: flex;
+}
+
+.emoji-panel span {
+    font-size: 22px;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.emoji-panel span:hover {
+    background: rgba(0, 122, 255, 0.15);
+}
+
+/* ===== 输入框 ===== */
+#textInput {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 20px;
+    background: #f2f2f7;
+    font-size: 15px;
+    line-height: 1.4;
+    outline: none;
+    resize: none;
+    overflow-y: auto;
+    min-height: 40px;
+    max-height: calc(1.4em * 5);
+    field-sizing: content;
+}
+
+/* ===== 发送按钮 ===== */
+#sendBtn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 20px;
+    background: #007AFF;
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    height: 40px;
+}
+
+/* ===== 录音按钮 ===== */
+.record-btn {
+    width: 40px;
+    height: 40px;
+    border: none;
+    border-radius: 50%;
+    background: #ff3b30;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.record-btn.recording {
+    animation: pulse 1s infinite;
+}
+
+.record-wave {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+}
+
+.record-btn.recording .record-wave {
+    display: flex;
+}
+
+.record-btn.recording span {
     display: none;
 }
 
-.alert-box p {
-    margin-bottom: 20px;
-    font-size: 16px;
-    color: #000;
+.record-wave .bar {
+    width: 4px;
+    height: 14px;
+    background: #fff;
+    border-radius: 2px;
+    animation: wave 1s infinite ease-in-out;
 }
 
-.alert-box button {
-    padding: 8px 20px;
+.record-wave .bar:nth-child(2) { animation-delay: .2s; height: 20px; }
+.record-wave .bar:nth-child(3) { animation-delay: .4s; height: 14px; }
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* ===== 确认弹窗（通用） ===== */
+.confirm-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+}
+
+.confirm-modal.show {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.confirm-box {
+    background: #fff;
+    border-radius: 14px;
+    padding: 20px;
+    width: 260px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    transform: scale(0.95);
+    transition: transform 0.2s ease;
+}
+
+.confirm-modal.show .confirm-box {
+    transform: scale(1);
+}
+
+.confirm-box p {
+    margin: 0 0 20px;
+    font-size: 15px;
+    color: #333;
+}
+
+.confirm-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.confirm-actions button {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
     border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.btn-cancel {
+    background: #f2f2f7;
+    color: #007AFF;
+}
+
+.btn-confirm {
+    background: #ff3b30;
+    color: #fff;
+}
+
+/* ===== 积分商城 ===== */
+.shop-modal {
+    position: fixed;
+    inset: 0;
+    background: #000;
+    z-index: 9999;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.shop-modal.active {
+    display: flex;
+}
+
+.shop-stars {
+    position: absolute;
+    inset: 0;
+    background-image:
+        radial-gradient(1px 1px at 10% 20%, #fff 1%, transparent 1%),
+        radial-gradient(1px 1px at 40% 70%, #fff 1%, transparent 1%);
+    z-index: 0;
+}
+
+.shop-stars::after {
+    content: "";
+    position: absolute;
+    inset: -50%;
+    background: conic-gradient(
+        from 0deg,
+        transparent 0deg,
+        rgba(255,255,255,0.06) 30deg,
+        transparent 60deg,
+        transparent 180deg,
+        rgba(255,255,255,0.06) 210deg,
+        transparent 240deg,
+        transparent 360deg
+    );
+    animation: shopStarTrail 40s linear infinite;
+}
+
+@keyframes shopStarTrail {
+    100% { transform: rotate(360deg); }
+}
+
+.shop-meteor {
+    position: absolute;
+    top: -100px;
+    left: -100px;
+    width: 2px;
+    height: 90px;
+    background: linear-gradient(180deg, #fff, transparent);
+    transform: rotate(135deg);
+    transform-origin: center;
+    opacity: 0;
+    animation: shopMeteor 6s ease-in infinite;
+    z-index: 1;
+}
+
+.shop-meteor:nth-child(2) {
+    top: -120px;
+    left: 50%;
+    animation-delay: 3s;
+}
+
+@keyframes shopMeteor {
+    0% {
+        opacity: 0;
+        transform: translate(0, 0) rotate(135deg);
+    }
+    10% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translate(600px, 600px) rotate(135deg);
+    }
+}
+
+.shop-title {
+    font-size: 48px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow:
+        0 0 12px rgba(255,255,255,0.6),
+        0 0 24px rgba(255,255,255,0.4);
+    background: rgba(255,255,255,0.08);
+    padding: 20px 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(12px);
+    z-index: 2;
+    letter-spacing: 4px;
+}
+
+.shop-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: none;
+    font-size: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.shop-close:hover {
+    background: rgba(255,255,255,0.2);
+}
+
+/* ===== 个人主页弹窗 ===== */
+.profile-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.profile-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    padding: 32px 40px;
+    border-radius: 24px;
+    box-shadow:
+        0 0 0 0.5px rgba(0, 0, 0, 0.08),
+        0 30px 80px rgba(0, 0, 0, 0.12);
+    animation: profileIn 0.3s ease;
+    max-width: 520px;
+    width: 90vw;
+    position: relative;
+}
+
+@keyframes profileIn {
+    from { opacity: 0; transform: scale(0.92) translateY(10px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* 左侧：头像 + 昵称 */
+.profile-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.profile-avatar {
+    width: 88px;
+    height: 88px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #34c759, #30d158);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 34px;
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 6px 20px rgba(52, 195, 89, 0.35);
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.2s;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.profile-avatar::after {
+    content: "📷 更换";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.profile-avatar:hover::after {
+    opacity: 1;
+}
+
+.profile-nickname {
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1d1d1f;
+    white-space: nowrap;
+}
+
+/* 右侧：个性签名 */
+.profile-right {
+    display: flex;
+    align-items: center;
+    min-height: 88px;
+    flex: 1;
+}
+
+.profile-signature {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #86868b;
+    font-style: italic;
+    border-left: 3px solid #007AFF;
+    padding-left: 18px;
+    position: relative;
+    word-break: break-word;
+}
+
+.edit-signature-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
     border: none;
     background: #007AFF;
-    color: white;
+    color: #fff;
     font-size: 14px;
     cursor: pointer;
-    margin: 0 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    transition: transform 0.2s, opacity 0.2s;
+    opacity: 0;
 }
 
-.alert-box button.cancel {
-    background: #8E8E93;
+.profile-signature-wrapper:hover .edit-signature-btn {
+    opacity: 1;
 }
 
-/* --- 隐藏滚动条 --- */
-::-webkit-scrollbar {
-    width: 6px;
-}
-::-webkit-scrollbar-track {
-    background: transparent;
-}
-::-webkit-scrollbar-thumb {
-    background: rgba(0,0,0,0.1);
-    border-radius: 3px;
+.edit-signature-btn:hover {
+    transform: scale(1.15);
 }
 
-/* --- 响应式 --- */
-@media (max-width: 768px) {
-    .header {
-        padding: 10px 15px;
+.profile-signature-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.signature-edit-container {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.signature-edit-container.active {
+    display: flex;
+}
+
+.signature-edit-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #007AFF;
+    border-radius: 12px;
+    font-size: 15px;
+    font-style: italic;
+    color: #1d1d1f;
+    outline: none;
+    background: rgba(0, 122, 255, 0.04);
+    font-family: inherit;
+    resize: none;
+    min-height: 60px;
+    max-height: 120px;
+    field-sizing: content;
+}
+
+.signature-edit-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.sig-btn-cancel {
+    background: #e4e4eb;
+    color: #1d1d1f;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.sig-btn-confirm {
+    background: #007AFF;
+    color: #fff;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.signature-display {
+    display: block;
+}
+
+.signature-display.hidden {
+    display: none;
+}
+
+/* 关闭按钮 */
+.profile-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.08);
+    color: #1d1d1f;
+    border: none;
+    font-size: 18px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+}
+
+.profile-close:hover {
+    background: rgba(0, 0, 0, 0.15);
+}
+
+/* 移动端：纵向排列 */
+@media (max-width: 540px) {
+    .profile-card {
+        flex-direction: column;
+        text-align: center;
+        padding: 28px 24px;
+        gap: 18px;
     }
-    
+
+    .profile-right {
+        min-height: auto;
+    }
+
+    .profile-signature {
+        border-left: none;
+        padding-left: 0;
+        border-top: 2px solid #007AFF;
+        padding-top: 14px;
+    }
+
+    .profile-avatar {
+        width: 72px;
+        height: 72px;
+        font-size: 28px;
+    }
+
+    .signature-edit-actions {
+        justify-content: center;
+    }
+}
+
+/* ===== 移动端（聊天室）===== */
+@media (max-width: 768px) {
     .chat-container {
         width: 100vw;
         height: 100vh;
-        max-width: none;
         max-height: none;
         border-radius: 0;
     }
-    
+
+    .top-bar {
+        top: 10px;
+        right: 12px;
+        gap: 8px;
+    }
+
+    #signBtn, #shopBtn {
+        font-size: 12px;
+        padding: 5px 12px;
+    }
+
+    .points-bar {
+        font-size: 13px;
+        padding: 5px 12px;
+    }
+
+    .emoji-panel {
+        bottom: 64px;
+        left: 8px;
+        gap: 6px;
+        padding: 8px;
+    }
+
+    .emoji-panel span {
+        font-size: 20px;
+    }
+
     .message {
-        max-width: 85%;
+        max-width: 82%;
+        font-size: 14px;
+    }
+
+    #textInput {
+        font-size: 14px;
+    }
+
+    #sendBtn {
+        font-size: 14px;
+        padding: 9px 16px;
+    }
+
+    .record-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .shop-title {
+        font-size: 32px;
+        padding: 16px 28px;
     }
 }
 </style>
 </head>
+
 <body>
 
 <div class="chat-container">
-    <!-- 顶部标题栏 -->
-    <div class="header">
-        <div class="header-left">
-            <div class="header-title">
-                💬 我的专属聊天室
+
+    <!-- 右上角 -->
+    <div class="top-bar">
+        <button id="shopBtn">🛒 积分商城</button>
+        <button id="signBtn">📅 签到</button>
+        <!-- 新增：重置头像按钮 -->
+        <button id="resetAvatarBtn">🔄 重置头像</button>
+        <div class="points-bar" id="pointsBar">💰 10</div>
+    </div>
+
+    <div class="header" style="text-align:left; padding-left:20px;">
+    💬 我的专属聊天室
+</div>
+
+    <div class="chat-box" id="chatBox">
+        <div class="system-toast" id="systemToast">✅ 聊天室已连接</div>
+    </div>
+
+    <!-- 输入栏 -->
+    <div class="input-bar">
+        <button class="plus-btn" id="plusBtn">+</button>
+
+        <div class="emoji-panel" id="emojiPanel">
+            <span>✅</span>
+            <span>👍</span>
+            <span>😄</span>
+            <span>👌</span>
+            <span>🤔</span>
+            <span>🔍</span>
+        </div>
+
+        <button class="record-btn" id="recordBtn">
+            <span>🎤</span>
+            <div class="record-wave">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
             </div>
-        </div>
-        
-        <div class="header-right">
-            <div class="icon-btn" id="shopBtn">🛒 积分商城</div>
-            <div class="icon-btn badge-green">✅ 已签到 - 连续 1 天</div>
-            <div class="icon-btn" id="resetAvatarBtn">🔄 重置头像</div>
-            <div class="icon-btn badge-yellow">💰 50</div>
-        </div>
-    </div>
+        </button>
 
-    <!-- 聊天区域 -->
-    <div class="chat-area" id="chatArea">
-        <div class="message other">
-            <div class="name">夏洛希</div>
-            Hello! 看看这个聊天室~
-        </div>
-        <div class="message self">
-            <div class="name">张三</div>
-            Nice UI!
-        </div>
-    </div>
+        <textarea id="textInput" placeholder="iMessage（Enter 换行，Ctrl+Enter 发送）"></textarea>
 
-    <!-- 输入区域 -->
-    <div class="input-area">
-        <div class="action-btn" id="emojiBtn">😊</div>
-        <div class="action-btn" id="voiceBtn">🎙️</div>
-        <input type="text" class="input-box" id="messageInput" placeholder="说点什么...">
-        <button class="send-btn" id="sendBtn">发送</button>
+        <button id="sendBtn">发送</button>
     </div>
 </div>
+
+<!-- 隐藏的文件上传 input -->
+<input type="file" id="avatarUpload" accept="image/*" style="display:none">
 
 <!-- 个人主页弹窗 -->
-<div class="modal-overlay" id="profileModal">
-    <div class="modal-content">
-        <div class="modal-title">个人主页</div>
-        <div class="avatar-upload" id="avatarUpload">
-            <span>👤</span>
-            <img id="avatarPreview" src="" alt="头像">
+<div class="profile-modal" id="profileModal">
+    <button class="profile-close" id="closeProfile">✕</button>
+    <div class="profile-card">
+        <!-- 左侧：头像 + 昵称 -->
+        <div class="profile-left">
+            <div class="profile-avatar" id="profileAvatarBig">
+                <span id="profileAvatarText">夏</span>
+            </div>
+            <div class="profile-nickname">夏洛希</div>
         </div>
-        <textarea class="signature-input" id="signatureInput" placeholder="写点什么吧..."></textarea>
-        <div class="btn-group">
-            <button class="btn btn-primary" id="saveProfileBtn">保存</button>
-            <button class="btn btn-secondary" id="closeModalBtn">关闭</button>
+        <!-- 右侧：个性签名 -->
+        <div class="profile-right">
+            <div class="profile-signature-wrapper">
+                <p class="profile-signature" id="signatureDisplay">
+                    "万物皆有裂痕，那是光照进来的地方。"
+                </p>
+                <button class="edit-signature-btn" id="editSigBtn" title="编辑签名">✏️</button>
+            </div>
+            <!-- 编辑模式 -->
+            <div class="signature-edit-container" id="sigEditContainer">
+                <textarea class="signature-edit-input" id="sigEditInput" placeholder="写下你的个性签名…" maxlength="100"></textarea>
+                <div class="signature-edit-actions">
+                    <button class="sig-btn-cancel" id="sigCancelBtn">取消</button>
+                    <button class="sig-btn-confirm" id="sigConfirmBtn">保存</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- 警告弹窗 -->
-<div class="alert-box" id="alertBox">
-    <p id="alertText">确定要重置头像吗？
-    <button id="confirmBtn">确定</button>
-    <button class="cancel" id="cancelBtn">取消</button>
+<!-- 积分商城 -->
+<div class="shop-modal" id="shopModal">
+    <div class="shop-stars"></div>
+    <div class="shop-meteor"></div>
+    <div class="shop-meteor"></div>
+    <div class="shop-title">积 分 商 城</div>
+    <button class="shop-close" id="closeShop">✕</button>
+</div>
+
+<!-- 撤回确认 -->
+<div class="confirm-modal" id="confirmModal">
+    <div class="confirm-box">
+        <p id="confirmText">确定要撤回吗？</p>
+        <div class="confirm-actions">
+            <button class="btn-cancel" id="cancelBtn">取消</button>
+            <button class="btn-confirm" id="confirmBtn">撤回</button>
+        </div>
+    </div>
 </div>
 
 <script>
-// 数据存储
-let userData = JSON.parse(localStorage.getItem('userData')) || {
-    avatar: '',
-    signature: '这个人很懒，什么都没留下',
-    coins: 50,
-    lastSignDate: ''
-};
+/* ===== DOM ===== */
+const chatBox = document.getElementById("chatBox");
+const textInput = document.getElementById("textInput");
+const sendBtn = document.getElementById("sendBtn");
+const recordBtn = document.getElementById("recordBtn");
+const systemToast = document.getElementById("systemToast");
+const signBtn = document.getElementById("signBtn");
+const shopBtn = document.getElementById("shopBtn");
+const shopModal = document.getElementById("shopModal");
+const closeShop = document.getElementById("closeShop");
+const plusBtn = document.getElementById("plusBtn");
+const emojiPanel = document.getElementById("emojiPanel");
+const profileModal = document.getElementById("profileModal");
+const closeProfile = document.getElementById("closeProfile");
+const avatarUpload = document.getElementById("avatarUpload");
+const resetAvatarBtn = document.getElementById("resetAvatarBtn");
 
-// DOM 元素
-const chatArea = document.getElementById('chatArea');
-const messageInput = document.getElementById('messageInput');
-const sendBtn = document.getElementById('sendBtn');
-const emojiBtn = document.getElementById('emojiBtn');
-const voiceBtn = document.getElementById('voiceBtn');
-const profileModal = document.getElementById('profileModal');
-const avatarUpload = document.getElementById('avatarUpload');
-const avatarPreview = document.getElementById('avatarPreview');
-const signatureInput = document.getElementById('signatureInput');
-const saveProfileBtn = document.getElementById('saveProfileBtn');
-const closeModalBtn = document.getElementById('closeModalBtn');
-const resetAvatarBtn = document.getElementById('resetAvatarBtn');
-const alertBox = document.getElementById('alertBox');
-const alertText = document.getElementById('alertText');
-const confirmBtn = document.getElementById('confirmBtn');
-const cancelBtn = document.getElementById('cancelBtn');
-const shopBtn = document.getElementById('shopBtn');
+/* ===== 头像上传 DOM ===== */
+const profileAvatarBig = document.getElementById("profileAvatarBig");
+const profileAvatarText = document.getElementById("profileAvatarText");
 
-// 初始化
-document.addEventListener('DOMContentLoaded', () => {
-    updateUI();
-    loadMessages();
-});
+const AVATAR_KEY = "userAvatar";
 
-// 更新UI
-function updateUI() {
-    // 更新头像
-    if (userData.avatar) {
-        avatarPreview.src = userData.avatar;
-        avatarPreview.style.display = 'block';
-        avatarUpload.querySelector('span').style.display = 'none';
-    } else {
-        avatarPreview.style.display = 'none';
-        avatarUpload.querySelector('span').style.display = 'flex';
-    }
-    
-    // 更新签名
-    signatureInput.value = userData.signature;
-    
-    // 更新金币
-    document.querySelector('.badge-yellow').textContent = `💰 ${userData.coins}`;
-}
+/* ===== 个人主页签名 DOM ===== */
+const signatureDisplay = document.getElementById("signatureDisplay");
+const editSigBtn = document.getElementById("editSigBtn");
+const sigEditContainer = document.getElementById("sigEditContainer");
+const sigEditInput = document.getElementById("sigEditInput");
+const sigCancelBtn = document.getElementById("sigCancelBtn");
+const sigConfirmBtn = document.getElementById("sigConfirmBtn");
 
-// 加载消息
-function loadMessages() {
-    const messages = JSON.parse(localStorage.getItem('messages')) || [];
-    chatArea.innerHTML = '';
-    messages.forEach(msg => {
-        addMessageToChat(msg.text, msg.sender, msg.type);
-    });
-}
+const SIGNATURE_KEY = "userSignature";
 
-// 添加消息到聊天区
-function addMessageToChat(text, sender = '张三', type = 'self') {
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${type}`;
-    messageDiv.innerHTML = `<div class="name">${sender}</div>${text}`;
-    chatArea.appendChild(messageDiv);
-    chatArea.scrollTop = chatArea.scrollHeight;
-    
-    // 保存到本地
-    const messages = JSON.parse(localStorage.getItem('messages')) || [];
-    messages.push({ text, sender, type, time: new Date().toISOString() });
-    localStorage.setItem('messages', JSON.stringify(messages));
-}
+/* ===== 头像上传逻辑 ===== */
 
-// 发送消息
-sendBtn.addEventListener('click', sendMessage);
-messageInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter' && !e.ctrlKey) {
-        e.preventDefault();
-        sendMessage();
-    }
-});
-
-function sendMessage() {
-    const text = messageInput.value.trim();
-    if (text) {
-        addMessageToChat(text, '我', 'self');
-        messageInput.value = '';
-        
-        // 模拟回复
-        setTimeout(() => {
-            addMessageToChat('收到了你的消息！', '夏洛希', 'other');
-        }, 1000);
-    }
-}
-
-// 表情按钮
-emojiBtn.addEventListener('click', () => {
-    const emojis = ['😊', '😂', '❤️', '👍', '🎉', '🤔', '🥺', '🔥'];
-    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-    messageInput.value += emoji;
-    messageInput.focus();
-});
-
-// 语音按钮
-voiceBtn.addEventListener('click', () => {
-    alert('语音功能需要麦克风权限，这里模拟30秒录音...');
-    let count = 30;
-    const timer = setInterval(() => {
-        count--;
-        if (count <= 0) {
-            clearInterval(timer);
-            alert('录音结束！');
+// 加载已保存的头像
+function loadAvatar() {
+    const saved = localStorage.getItem(AVATAR_KEY);
+    if (saved) {
+        profileAvatarText.style.display = "none";
+        let img = profileAvatarBig.querySelector("img");
+        if (!img) {
+            img = document.createElement("img");
+            profileAvatarBig.appendChild(img);
         }
-    }, 1000);
-});
+        img.src = saved;
 
-// 打开个人主页
-document.querySelector('.header-title').addEventListener('click', openProfileModal);
-document.querySelector('.header-title').style.cursor = 'pointer';
-
-function openProfileModal() {
-    profileModal.style.display = 'flex';
-    updateUI();
+        document.querySelectorAll(".avatar").forEach(av => {
+            av.innerHTML = "";
+            const imgEl = document.createElement("img");
+            imgEl.src = saved;
+            av.appendChild(imgEl);
+        });
+    }
 }
 
-// 关闭弹窗
-closeModalBtn.addEventListener('click', () => {
-    profileModal.style.display = 'none';
-});
+// 触发文件选择
+profileAvatarBig.onclick = () => avatarUpload.click();
 
-// 头像上传
-avatarUpload.addEventListener('click', () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                userData.avatar = event.target.result;
-                updateUI();
-            };
-            reader.readAsDataURL(file);
-        }
-    };
-    input.click();
-});
+// 处理文件选择
+avatarUpload.addEventListener("change", e => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-// 保存个人资料
-saveProfileBtn.addEventListener('click', () => {
-    userData.signature = signatureInput.value;
-    localStorage.setItem('userData', JSON.stringify(userData));
-    alert('保存成功！');
-    profileModal.style.display = 'none';
-});
-
-// 重置头像
-resetAvatarBtn.addEventListener('click', () => {
-    if (!userData.avatar) {
-        alert('你还没有上传过头像！');
+    if (!file.type.startsWith("image/")) {
+        showSystemToast("请选择图片文件～");
+        avatarUpload.value = "";
         return;
     }
-    
-    alertText.textContent = '确定要重置为默认头像吗？';
-    alertBox.style.display = 'block';
-    
-    confirmBtn.onclick = () => {
-        userData.avatar = '';
-        localStorage.setItem('userData', JSON.stringify(userData));
-        updateUI();
-        alertBox.style.display = 'none';
-        alert('头像已重置为默认！');
+
+    if (file.size > 5 * 1024 * 1024) {
+        showSystemToast("图片不能超过 5MB～");
+        avatarUpload.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+        const base64 = ev.target.result;
+        localStorage.setItem(AVATAR_KEY, base64);
+        loadAvatar();
+        showSystemToast("📷 头像已更新");
     };
-    
-    cancelBtn.onclick = () => {
-        alertBox.style.display = 'none';
-    };
+    reader.readAsDataURL(file);
+    avatarUpload.value = "";
 });
 
-// 商城按钮
-shopBtn.addEventListener('click', () => {
-    alert('积分商城开发中...');
-});
+/* ===== 重置头像逻辑 ===== */
+resetAvatarBtn.onclick = () => {
+    showConfirm("确定要重置头像吗？这将恢复为你上传的自定义头像。", () => {
+        const saved = localStorage.getItem(AVATAR_KEY);
+        if (saved) {
+            loadAvatar();
+            showSystemToast("✅ 头像已重置");
+        } else {
+            showSystemToast("⚠️ 未找到已上传的头像");
+        }
+    });
+};
 
-// 点击遮罩层关闭弹窗
-profileModal.addEventListener('click', (e) => {
-    if (e.target === profileModal) {
-        profileModal.style.display = 'none';
+/* ===== 签名编辑逻辑 ===== */
+
+// 加载已保存的签名
+function loadSignature() {
+    const saved = localStorage.getItem(SIGNATURE_KEY);
+    if (saved) {
+        signatureDisplay.textContent = saved;
+    }
+}
+
+// 进入编辑模式
+editSigBtn.onclick = () => {
+    sigEditInput.value = signatureDisplay.textContent;
+    signatureDisplay.classList.add("hidden");
+    sigEditContainer.classList.add("active");
+    sigEditInput.focus();
+};
+
+// 取消编辑
+sigCancelBtn.onclick = () => {
+    sigEditContainer.classList.remove("active");
+    signatureDisplay.classList.remove("hidden");
+};
+
+// 保存签名
+function saveSignature() {
+    const val = sigEditInput.value.trim();
+    if (!val) {
+        showSystemToast("签名不能为空哦～");
+        return;
+    }
+    const formatted = `"${val}"`;
+    signatureDisplay.textContent = formatted;
+    localStorage.setItem(SIGNATURE_KEY, formatted);
+    sigEditContainer.classList.remove("active");
+    signatureDisplay.classList.remove("hidden");
+    showSystemToast("✅ 签名已更新");
+}
+
+sigConfirmBtn.onclick = saveSignature;
+
+// 回车保存，Esc 取消
+sigEditInput.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        saveSignature();
+    }
+    if (e.key === "Escape") {
+        sigCancelBtn.onclick();
     }
 });
 
-alertBox.addEventListener('click', (e) => {
-    if (e.target === alertBox) {
-        alertBox.style.display = 'none';
+/* ===== 积分 ===== */
+let points = parseInt(localStorage.getItem("points")) || 10;
+const today = new Date().toDateString();
+
+if (localStorage.getItem("lastLogin") !== today) {
+    points += 10;
+    localStorage.setItem("lastLogin", today);
+}
+localStorage.setItem("points", points);
+
+function updatePoints() {
+    document.getElementById("pointsBar").textContent = "💰 " + points;
+    localStorage.setItem("points", points);
+}
+
+/* ===== 签到 ===== */
+const STREAK_KEY = "signStreak";
+
+function getStreak() {
+    return parseInt(localStorage.getItem(STREAK_KEY)) || 0;
+}
+
+function updateStreak() {
+    const lastSign = localStorage.getItem("lastSignDate");
+    let streak = getStreak();
+
+    if (lastSign === today) return streak;
+
+    if (lastSign === new Date(Date.now() - 86400000).toDateString()) {
+        streak++;
+    } else {
+        streak = 1;
+    }
+
+    localStorage.setItem("lastSignDate", today);
+    localStorage.setItem(STREAK_KEY, streak);
+    return streak;
+}
+
+function checkSignStatus() {
+    const lastSign = localStorage.getItem("lastSignDate");
+    const streak = getStreak();
+
+    if (lastSign === today) {
+        signBtn.disabled = true;
+        signBtn.innerHTML = `✅ 已签到 · 连续 ${streak} 天`;
+    } else {
+        signBtn.disabled = false;
+        signBtn.textContent = "📅 签到";
+    }
+}
+
+signBtn.onclick = () => {
+    if (signBtn.disabled) return;
+
+    const streak = updateStreak();
+    points += 10;
+    updatePoints();
+
+    signBtn.disabled = true;
+    signBtn.innerHTML = `✅ 已签到 · 连续 ${streak} 天`;
+
+    showSystemToast(`📅 签到成功 +10 积分 · 连续 ${streak} 天`);
+};
+
+/* ===== 商城 ===== */
+shopBtn.onclick = () => shopModal.classList.add("active");
+closeShop.onclick = () => shopModal.classList.remove("active");
+
+/* ===== 个人主页 ===== */
+function openProfile() {
+    loadSignature();
+    loadAvatar();
+    profileModal.classList.add("active");
+}
+
+function closeProfileModal() {
+    sigEditContainer.classList.remove("active");
+    signatureDisplay.classList.remove("hidden");
+    profileModal.classList.remove("active");
+}
+
+closeProfile.onclick = closeProfileModal;
+
+profileModal.addEventListener("click", e => {
+    if (e.target === profileModal) closeProfileModal();
+});
+
+/* ===== 表情 ===== */
+plusBtn.onclick = () => emojiPanel.classList.toggle("active");
+
+emojiPanel.querySelectorAll("span").forEach(span => {
+    span.onclick = () => {
+        const start = textInput.selectionStart;
+        const end = textInput.selectionEnd;
+        const before = textInput.value.substring(0, start);
+        const after = textInput.value.substring(end);
+        textInput.value = before + span.textContent + after;
+        textInput.selectionStart = textInput.selectionEnd = start + span.textContent.length;
+        textInput.focus();
+    };
+});
+
+/* ===== 确认弹窗 ===== */
+const confirmModal = document.getElementById("confirmModal");
+const confirmText = document.getElementById("confirmText");
+const cancelBtn = document.getElementById("cancelBtn");
+const confirmBtn = document.getElementById("confirmBtn");
+let pendingAction = null;
+
+function showConfirm(text, action) {
+    confirmText.textContent = text;
+    confirmModal.classList.add("show");
+    pendingAction = action;
+}
+
+function hideConfirm() {
+    confirmModal.classList.remove("show");
+    pendingAction = null;
+}
+
+cancelBtn.onclick = hideConfirm;
+confirmBtn.onclick = () => {
+    if (pendingAction) pendingAction();
+    hideConfirm();
+};
+
+/* ===== 录音 ===== */
+const MIN_DURATION = 0.5;
+const MAX_DURATION = 30;
+
+let mediaRecorder;
+let audioChunks = [];
+let recordStartTime = 0;
+let maxDurationTimer = null;
+
+/* ===== 防刷 ===== */
+let messageHistory = [];
+let messageCount = 0;
+
+/* ===== 系统提示 ===== */
+function showSystemToast(msg) {
+    systemToast.textContent = msg;
+    systemToast.style.animation = "none";
+    void systemToast.offsetWidth;
+    systemToast.style.animation = "toastInOut 3s ease forwards";
+}
+
+/* ===== 渲染消息 ===== */
+function renderMessage(text, isSelf, sender, isVoice = false, duration = 0, audioUrl = null) {
+    const msg = document.createElement("div");
+    msg.className = `message ${isSelf ? "self" : "other"}`;
+
+    const avatar = document.createElement("span");
+    avatar.className = "avatar";
+
+    const savedAvatar = localStorage.getItem(AVATAR_KEY);
+    if (savedAvatar && isSelf) {
+        const img = document.createElement("img");
+        img.src = savedAvatar;
+        avatar.appendChild(img);
+    } else {
+        avatar.textContent = sender.avatar;
+    }
+
+    avatar.onclick = () => openProfile();
+
+    const nick = document.createElement("span");
+    nick.className = "nickname";
+    nick.textContent = sender.nickname;
+
+    let content;
+
+    if (isVoice && audioUrl) {
+        content = document.createElement("div");
+        content.className = "voice-bubble";
+        content.innerHTML = `
+            🎵
+            <span class="voice-duration">${duration.toFixed(1)}″</span>
+            <div class="waveform">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+            </div>
+        `;
+
+        content.addEventListener("click", () => new Audio(audioUrl).play());
+
+        let timer;
+        content.addEventListener("mousedown", () => {
+            content.classList.add("show-wave");
+            timer = setTimeout(() => content.classList.remove("show-wave"), 2000);
+        });
+        content.addEventListener("mouseup", () => clearTimeout(timer));
+        content.addEventListener("mouseleave", () => clearTimeout(timer));
+
+        if (isSelf) {
+            msg.addEventListener("contextmenu", e => {
+                e.preventDefault();
+                showConfirm("确定要删除这条语音吗？", () => {
+                    msg.remove();
+                    showSystemToast("语音已删除");
+                });
+            });
+        }
+    } else {
+        content = document.createTextNode(text);
+        msg.dataset.text = text;
+
+        if (isSelf) {
+            msg.addEventListener("contextmenu", e => {
+                e.preventDefault();
+                showConfirm("确定要撤回这条消息吗？", () => {
+                    textInput.value = text;
+                    textInput.focus();
+                    msg.remove();
+                    showSystemToast("已撤回，快改吧 😂");
+                });
+            });
+        }
+    }
+
+    msg.appendChild(avatar);
+    msg.appendChild(nick);
+    msg.appendChild(content);
+
+    chatBox.appendChild(msg);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+/* ===== 发送文本 ===== */
+function sendText() {
+    const text = textInput.value.trim();
+    if (!text) return;
+
+    messageHistory.push(text);
+    if (messageHistory.length > 3) messageHistory.shift();
+
+    const isSpam = messageHistory.length === 3 &&
+        messageHistory[0] === messageHistory[1] &&
+        messageHistory[1] === messageHistory[2];
+
+    if (isSpam) {
+        showSystemToast("🚫 别刷屏啦，积分没了～");
+        textInput.value = "";
+        textInput.style.height = "auto";
+        return;
+    }
+
+    renderMessage(text, true, { nickname: "夏洛希", avatar: "夏" });
+
+    textInput.value = "";
+    textInput.style.height = "auto";
+
+    messageCount++;
+    if (messageCount % 2 === 0) {
+        points += 1;
+        updatePoints();
+        showSystemToast("💰 发消息 +1 积分");
+    }
+}
+
+textInput.addEventListener("keydown", e => {
+    if (e.key === "Enter" && e.ctrlKey) {
+        e.preventDefault();
+        sendText();
     }
 });
+
+sendBtn.onclick = sendText;
+
+/* ===== 录音逻辑 ===== */
+recordBtn.onmousedown = async () => {
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        mediaRecorder = new MediaRecorder(stream);
+        audioChunks = [];
+        recordStartTime = Date.now();
+
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.start();
+        recordBtn.classList.add("recording");
+
+        maxDurationTimer = setTimeout(() => {
+            mediaRecorder.stop();
+            recordBtn.classList.remove("recording");
+            showSystemToast("最长只能录 30 秒哦～");
+        }, MAX_DURATION * 1000);
+
+    } catch {
+        showSystemToast("麦克风权限被拒绝 😢");
+    }
+};
+
+recordBtn.onmouseup = () => {
+    if (!mediaRecorder || mediaRecorder.state === "inactive") return;
+    clearTimeout(maxDurationTimer);
+    mediaRecorder.stop();
+    recordBtn.classList.remove("recording");
+
+    mediaRecorder.addEventListener("stop", () => {
+        const duration = (Date.now() - recordStartTime) / 1000;
+        if (duration < MIN_DURATION) {
+            showSystemToast("录音时间太短啦～");
+            return;
+        }
+        const audioBlob = new Blob(audioChunks, { type: "audio/webm" });
+        const audioUrl = URL.createObjectURL(audioBlob);
+        renderMessage("", true, { nickname: "夏洛希", avatar: "夏" }, true, duration, audioUrl);
+    }, { once: true });
+};
+
+/* ===== 初始化 ===== */
+window.onload = () => {
+    updatePoints();
+    checkSignStatus();
+    loadSignature();
+    loadAvatar();
+    showSystemToast("✅ 聊天室已连接");
+};
 </script>
 
 </body>
