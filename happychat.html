@@ -598,7 +598,7 @@ body {
         0 0 0 0.5px rgba(0, 0, 0, 0.08),
         0 30px 80px rgba(0, 0, 0, 0.12);
     animation: profileIn 0.3s ease;
-    max-width: 500px;
+    max-width: 520px;
     width: 90vw;
 }
 
@@ -642,6 +642,7 @@ body {
     display: flex;
     align-items: center;
     min-height: 88px;
+    flex: 1;
 }
 
 .profile-signature {
@@ -651,6 +652,105 @@ body {
     font-style: italic;
     border-left: 3px solid #007AFF;
     padding-left: 18px;
+    position: relative;
+    word-break: break-word;
+}
+
+/* 编辑按钮（铅笔）*/
+.edit-signature-btn {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: none;
+    background: #007AFF;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+    transition: transform 0.2s, opacity 0.2s;
+    opacity: 0;
+}
+
+.profile-signature-wrapper:hover .edit-signature-btn {
+    opacity: 1;
+}
+
+.edit-signature-btn:hover {
+    transform: scale(1.15);
+}
+
+.profile-signature-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* 编辑模式 */
+.signature-edit-container {
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.signature-edit-container.active {
+    display: flex;
+}
+
+.signature-edit-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid #007AFF;
+    border-radius: 12px;
+    font-size: 15px;
+    font-style: italic;
+    color: #1d1d1f;
+    outline: none;
+    background: rgba(0, 122, 255, 0.04);
+    font-family: inherit;
+    resize: none;
+    min-height: 60px;
+    max-height: 120px;
+    field-sizing: content;
+}
+
+.signature-edit-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.signature-edit-actions button {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.sig-btn-cancel {
+    background: #e4e4eb;
+    color: #1d1d1f;
+}
+
+.sig-btn-confirm {
+    background: #007AFF;
+    color: #fff;
+}
+
+.signature-display {
+    display: block;
+}
+
+.signature-display.hidden {
+    display: none;
 }
 
 /* 关闭按钮 */
@@ -698,6 +798,10 @@ body {
         width: 72px;
         height: 72px;
         font-size: 28px;
+    }
+
+    .signature-edit-actions {
+        justify-content: center;
     }
 }
 
@@ -821,7 +925,22 @@ body {
         </div>
         <!-- 右侧：个性签名 -->
         <div class="profile-right">
-            <p class="profile-signature">"万物皆有裂痕，那是光照进来的地方。"</p>
+            <div class="profile-signature-wrapper">
+                <!-- 查看模式 -->
+                <p class="profile-signature" id="signatureDisplay">
+                    "万物皆有裂痕，那是光照进来的地方。"
+                </p>
+                <!-- 编辑按钮 -->
+                <button class="edit-signature-btn" id="editSigBtn" title="编辑签名">✏️</button>
+            </div>
+            <!-- 编辑模式 -->
+            <div class="signature-edit-container" id="sigEditContainer">
+                <textarea class="signature-edit-input" id="sigEditInput" placeholder="写下你的个性签名…" maxlength="100"></textarea>
+                <div class="signature-edit-actions">
+                    <button class="sig-btn-cancel" id="sigCancelBtn">取消</button>
+                    <button class="sig-btn-confirm" id="sigConfirmBtn">保存</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -861,6 +980,67 @@ const plusBtn = document.getElementById("plusBtn");
 const emojiPanel = document.getElementById("emojiPanel");
 const profileModal = document.getElementById("profileModal");
 const closeProfile = document.getElementById("closeProfile");
+
+/* ===== 个人主页 DOM ===== */
+const signatureDisplay = document.getElementById("signatureDisplay");
+const editSigBtn = document.getElementById("editSigBtn");
+const sigEditContainer = document.getElementById("sigEditContainer");
+const sigEditInput = document.getElementById("sigEditInput");
+const sigCancelBtn = document.getElementById("sigCancelBtn");
+const sigConfirmBtn = document.getElementById("sigConfirmBtn");
+
+/* ===== 签名编辑逻辑 ===== */
+const SIGNATURE_KEY = "userSignature";
+
+// 加载已保存的签名
+function loadSignature() {
+    const saved = localStorage.getItem(SIGNATURE_KEY);
+    if (saved) {
+        signatureDisplay.textContent = saved;
+    }
+}
+
+// 进入编辑模式
+editSigBtn.onclick = () => {
+    sigEditInput.value = signatureDisplay.textContent;
+    signatureDisplay.classList.add("hidden");
+    sigEditContainer.classList.add("active");
+    sigEditInput.focus();
+};
+
+// 取消编辑
+sigCancelBtn.onclick = () => {
+    sigEditContainer.classList.remove("active");
+    signatureDisplay.classList.remove("hidden");
+};
+
+// 保存签名
+function saveSignature() {
+    const val = sigEditInput.value.trim();
+    if (!val) {
+        showSystemToast("签名不能为空哦～");
+        return;
+    }
+    const formatted = `"${val}"`;
+    signatureDisplay.textContent = formatted;
+    localStorage.setItem(SIGNATURE_KEY, formatted);
+    sigEditContainer.classList.remove("active");
+    signatureDisplay.classList.remove("hidden");
+    showSystemToast("✅ 签名已更新");
+}
+
+sigConfirmBtn.onclick = saveSignature;
+
+// 回车保存，Esc 取消
+sigEditInput.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        saveSignature();
+    }
+    if (e.key === "Escape") {
+        sigCancelBtn.onclick();
+    }
+});
 
 /* ===== 积分 ===== */
 let points = parseInt(localStorage.getItem("points")) || 10;
@@ -933,16 +1113,19 @@ closeShop.onclick = () => shopModal.classList.remove("active");
 
 /* ===== 个人主页（点击头像打开）===== */
 function openProfile() {
+    loadSignature(); // 每次打开时刷新签名
     profileModal.classList.add("active");
 }
 
 function closeProfileModal() {
+    // 关闭时退出编辑模式
+    sigEditContainer.classList.remove("active");
+    signatureDisplay.classList.remove("hidden");
     profileModal.classList.remove("active");
 }
 
 closeProfile.onclick = closeProfileModal;
 
-// 点击弹窗背景也关闭
 profileModal.addEventListener("click", e => {
     if (e.target === profileModal) closeProfileModal();
 });
@@ -1169,6 +1352,7 @@ recordBtn.onmouseup = () => {
 window.onload = () => {
     updatePoints();
     checkSignStatus();
+    loadSignature();
     showSystemToast("✅ 聊天室已连接");
 };
 </script>
