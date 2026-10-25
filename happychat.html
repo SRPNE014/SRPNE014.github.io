@@ -629,7 +629,6 @@ body {
     to { opacity: 1; transform: scale(1) translateY(0); }
 }
 
-/* 个人主页主体内容（左右布局） */
 .profile-body {
     display: flex;
     align-items: center;
@@ -637,7 +636,6 @@ body {
     width: 100%;
 }
 
-/* 左侧：头像 + 昵称 */
 .profile-left {
     display: flex;
     flex-direction: column;
@@ -701,7 +699,6 @@ body {
     white-space: nowrap;
 }
 
-/* 右侧：个性签名 */
 .profile-right {
     display: flex;
     align-items: center;
@@ -829,7 +826,6 @@ body {
     color: #fff;
 }
 
-/* 关闭按钮 */
 .profile-close {
     position: absolute;
     top: 20px;
@@ -943,7 +939,6 @@ body {
 
 <div class="chat-container">
 
-    <!-- 右上角 -->
     <div class="top-bar">
         <button id="shopBtn">🛒 积分商城</button>
         <button id="signBtn">📅 签到</button>
@@ -957,7 +952,6 @@ body {
         <div class="system-toast" id="systemToast">✅ 聊天室已连接</div>
     </div>
 
-    <!-- 输入栏 -->
     <div class="input-bar">
         <button class="plus-btn" id="plusBtn">+</button>
 
@@ -979,20 +973,18 @@ body {
             </div>
         </button>
 
-        <textarea id="textInput" placeholder="iMessage（Enter 换行，Ctrl+Enter 发送）"></textarea>
+        <textarea id="textInput" placeholder="iMessage（Enter 发送，输入框自动换行）"></textarea>
 
         <button id="sendBtn">发送</button>
     </div>
 </div>
 
-<!-- 隐藏的文件上传 input -->
 <input type="file" id="avatarUpload" accept="image/*" style="display:none">
 
 <!-- 个人主页弹窗 -->
 <div class="profile-modal" id="profileModal">
     <button class="profile-close" id="closeProfile">✕</button>
     <div class="profile-card">
-        <!-- 主体：头像+昵称 / 签名 -->
         <div class="profile-body">
             <div class="profile-left">
                 <div class="profile-avatar" id="profileAvatarBig">
@@ -1007,7 +999,6 @@ body {
             </div>
         </div>
 
-        <!-- 统一编辑按钮 -->
         <button class="edit-profile-btn" id="editProfileBtn">✏️ 编辑个人信息</button>
     </div>
 </div>
@@ -1069,13 +1060,11 @@ const closeProfile = document.getElementById("closeProfile");
 const avatarUpload = document.getElementById("avatarUpload");
 const resetAvatarBtn = document.getElementById("resetAvatarBtn");
 
-/* ===== 个人主页 DOM ===== */
 const profileAvatarBig = document.getElementById("profileAvatarBig");
 const profileAvatarText = document.getElementById("profileAvatarText");
 const profileNickname = document.getElementById("profileNickname");
 const signatureDisplay = document.getElementById("signatureDisplay");
 
-/* ===== 编辑弹窗 DOM ===== */
 const editProfileBtn = document.getElementById("editProfileBtn");
 const editModal = document.getElementById("editModal");
 const editNickname = document.getElementById("editNickname");
@@ -1093,7 +1082,6 @@ function loadProfile() {
     const savedName = localStorage.getItem(NICKNAME_KEY);
     const savedSig = localStorage.getItem(SIGNATURE_KEY);
 
-    // 昵称
     if (savedName) {
         profileNickname.textContent = savedName;
         profileAvatarText.textContent = savedName.charAt(0);
@@ -1101,12 +1089,10 @@ function loadProfile() {
         profileAvatarText.textContent = "夏";
     }
 
-    // 签名
     if (savedSig) {
         signatureDisplay.textContent = savedSig;
     }
 
-    // 头像
     if (savedAvatar) {
         profileAvatarText.style.display = "none";
         let img = profileAvatarBig.querySelector("img");
@@ -1171,7 +1157,6 @@ resetAvatarBtn.onclick = () => {
 /* ===== 编辑个人信息弹窗 ===== */
 editProfileBtn.onclick = () => {
     editNickname.value = profileNickname.textContent;
-    // 去掉签名外层引号方便编辑
     editSignature.value = signatureDisplay.textContent.replace(/^"|"$/g, "");
     editModal.classList.add("active");
     editNickname.focus();
@@ -1196,15 +1181,12 @@ function saveProfile() {
         return;
     }
 
-    // 签名自动加引号
     const sig = sigRaw ? `"${sigRaw}"` : '""';
 
-    // 更新页面
     profileNickname.textContent = name;
     profileAvatarText.textContent = name.charAt(0);
     signatureDisplay.textContent = sig;
 
-    // 保存
     localStorage.setItem(NICKNAME_KEY, name);
     localStorage.setItem(SIGNATURE_KEY, sig);
 
@@ -1214,7 +1196,6 @@ function saveProfile() {
 
 confirmEditBtn.onclick = saveProfile;
 
-// 回车切换 / 保存
 editNickname.addEventListener("keydown", e => {
     if (e.key === "Enter") {
         e.preventDefault();
@@ -1369,7 +1350,6 @@ let maxDurationTimer = null;
 let messageHistory = [];
 let messageCount = 0;
 
-/* ===== 系统提示 ===== */
 function showSystemToast(msg) {
     systemToast.textContent = msg;
     systemToast.style.animation = "none";
@@ -1492,8 +1472,10 @@ function sendText() {
     }
 }
 
+/* ===== 快捷键（已互换）===== */
+// Enter = 发送，Shift+Enter = 换行（自动增高）
 textInput.addEventListener("keydown", e => {
-    if (e.key === "Enter" && e.ctrlKey) {
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey) {
         e.preventDefault();
         sendText();
     }
