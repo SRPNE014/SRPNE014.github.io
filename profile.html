@@ -20,6 +20,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 /* ===== Profile Card ===== */
@@ -58,14 +59,8 @@ body {
     font-size: 32px;
     color: #fff;
     font-weight: 700;
-    /* 如需真实图片：取消注释下一行并放 <img> 进 .avatar-circle */
-    /* overflow: hidden; */
     box-shadow: 0 4px 16px rgba(52,195,89,0.3);
 }
-
-/* 用图片时替换 .avatar 内文字为：
-<img src="your-avatar.jpg" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
-*/
 
 .nickname {
     margin-top: 8px;
@@ -89,6 +84,131 @@ body {
     font-style: italic;
     border-left: 3px solid #007AFF;
     padding-left: 16px;
+}
+
+/* ===== 编辑个人信息按钮 ===== */
+.edit-profile-btn {
+    margin-top: 20px;
+    background: #007AFF;
+    color: #fff;
+    border: none;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 10px 28px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.edit-profile-btn:hover {
+    opacity: 0.85;
+    transform: scale(1.03);
+}
+
+/* ===== 编辑弹窗 ===== */
+.edit-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+}
+
+.edit-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.edit-box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    padding: 28px 32px;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    width: 340px;
+    animation: editIn 0.3s ease;
+}
+
+@keyframes editIn {
+    from { opacity: 0; transform: scale(0.92); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.edit-box h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1d1d1f;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.edit-field {
+    margin-bottom: 16px;
+}
+
+.edit-field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #86868b;
+    margin-bottom: 6px;
+}
+
+.edit-field input,
+.edit-field textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid rgba(0,0,0,0.1);
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    outline: none;
+    background: #fff;
+    transition: border-color 0.2s;
+}
+
+.edit-field input:focus,
+.edit-field textarea:focus {
+    border-color: #007AFF;
+}
+
+.edit-field textarea {
+    resize: none;
+    min-height: 60px;
+    max-height: 120px;
+    field-sizing: content;
+}
+
+.edit-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+
+.edit-actions button {
+    flex: 1;
+    padding: 10px 0;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-cancel-edit {
+    background: #f2f2f7;
+    color: #1d1d1f;
+}
+
+.btn-confirm-edit {
+    background: #007AFF;
+    color: #fff;
 }
 
 /* ===== 移动端：纵向排列 ===== */
@@ -117,15 +237,140 @@ body {
 <div class="profile-card">
     <!-- 左侧：头像 + 昵称 -->
     <div class="profile-left">
-        <div class="avatar">夏</div>
-        <div class="nickname">夏洛希</div>
+        <div class="avatar" id="avatarText">夏</div>
+        <div class="nickname" id="nicknameText">夏洛希</div>
     </div>
 
     <!-- 右侧：个性签名 -->
     <div class="profile-right">
-        <p class="signature">"万物皆有裂痕，那是光照进来的地方。"</p>
+        <p class="signature" id="signatureText">"万物皆有裂痕，那是光照进来的地方。"</p>
     </div>
 </div>
+
+<!-- 统一编辑按钮 -->
+<button class="edit-profile-btn" id="editProfileBtn">✏️ 编辑个人信息</button>
+
+<!-- 编辑弹窗 -->
+<div class="edit-modal" id="editModal">
+    <div class="edit-box">
+        <h3>编辑个人信息</h3>
+        <div class="edit-field">
+            <label for="editNickname">昵称</label>
+            <input type="text" id="editNickname" maxlength="20" placeholder="请输入昵称">
+        </div>
+        <div class="edit-field">
+            <label for="editSignature">个性签名</label>
+            <textarea id="editSignature" maxlength="100" placeholder="写下你的个性签名…"></textarea>
+        </div>
+        <div class="edit-actions">
+            <button class="btn-cancel-edit" id="cancelEditBtn">取消</button>
+            <button class="btn-confirm-edit" id="confirmEditBtn">保存</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ===== DOM ===== */
+const avatarText = document.getElementById("avatarText");
+const nicknameText = document.getElementById("nicknameText");
+const signatureText = document.getElementById("signatureText");
+const editProfileBtn = document.getElementById("editProfileBtn");
+const editModal = document.getElementById("editModal");
+const editNickname = document.getElementById("editNickname");
+const editSignature = document.getElementById("editSignature");
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+const confirmEditBtn = document.getElementById("confirmEditBtn");
+
+const NICKNAME_KEY = "profileNickname";
+const SIGNATURE_KEY = "profileSignature";
+
+/* ===== 加载已保存的数据 ===== */
+function loadProfile() {
+    const savedNickname = localStorage.getItem(NICKNAME_KEY);
+    const savedSignature = localStorage.getItem(SIGNATURE_KEY);
+
+    if (savedNickname) {
+        nicknameText.textContent = savedNickname;
+        // 头像首字母也同步更新
+        avatarText.textContent = savedNickname.charAt(0);
+    }
+
+    if (savedSignature) {
+        signatureText.textContent = savedSignature;
+    }
+}
+
+/* ===== 打开编辑弹窗 ===== */
+editProfileBtn.onclick = () => {
+    editNickname.value = nicknameText.textContent;
+    editSignature.value = signatureText.textContent;
+    editModal.classList.add("active");
+    editNickname.focus();
+};
+
+/* ===== 关闭编辑弹窗 ===== */
+function closeEditModal() {
+    editModal.classList.remove("active");
+}
+
+cancelEditBtn.onclick = closeEditModal;
+
+// 点击遮罩关闭
+editModal.addEventListener("click", e => {
+    if (e.target === editModal) closeEditModal();
+});
+
+/* ===== 保存 ===== */
+function saveProfile() {
+    const name = editNickname.value.trim();
+    const sig = editSignature.value.trim();
+
+    if (!name) {
+        alert("昵称不能为空～");
+        return;
+    }
+
+    // 自动给签名加引号
+    let formattedSig = sig;
+    if (formattedSig && !formattedSig.startsWith('"')) formattedSig = '"' + formattedSig;
+    if (formattedSig && !formattedSig.endsWith('"')) formattedSig = formattedSig + '"';
+    if (!formattedSig) formattedSig = '""';
+
+    // 更新页面
+    nicknameText.textContent = name;
+    avatarText.textContent = name.charAt(0);
+    signatureText.textContent = formattedSig;
+
+    // 保存到 LocalStorage
+    localStorage.setItem(NICKNAME_KEY, name);
+    localStorage.setItem(SIGNATURE_KEY, formattedSig);
+
+    closeEditModal();
+}
+
+confirmEditBtn.onclick = saveProfile;
+
+// 回车保存
+editNickname.addEventListener("keydown", e => {
+    if (e.key === "Enter") {
+        e.preventDefault();
+        editSignature.focus();
+    }
+});
+
+editSignature.addEventListener("keydown", e => {
+    if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        saveProfile();
+    }
+    if (e.key === "Escape") {
+        closeEditModal();
+    }
+});
+
+/* ===== 初始化 ===== */
+window.onload = loadProfile;
+</script>
 
 </body>
 </html>
